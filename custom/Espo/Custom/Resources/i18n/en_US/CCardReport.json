@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "latitude": "Широта",
+        "location": "Геолокация",
+        "longitude": "Долгота",
+        "phoneNumber": "Номер Телефона",
+        "position": "Должность"
+    },
+    "links": [],
+    "labels": {
+        "Create CCardReport": "Create Табель"
+    }
+}

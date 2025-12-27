@@ -1,0 +1,26 @@
+{
+    "view": "custom:views/dashlets/yesterday-sales",
+    "aclScope": "CMotivation",
+    "entityType": "CMotivation",
+    "options": {
+        "fields": {
+            "title": {
+                "type": "varchar",
+                "required": true
+            },
+            "autorefreshInterval": {
+                "type": "enumFloat",
+                "options": [0, 0.5, 1, 2, 5, 10]
+            },
+            "displayRecords": {
+                "type": "enumInt",
+                "options": [5, 10, 15, 20]
+            }
+        },
+        "defaults": {
+            "title": "Продажи вчера",
+            "autorefreshInterval": 0.5,
+            "displayRecords": 10
+        }
+    }
+}

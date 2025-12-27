@@ -1,0 +1,36 @@
+{
+    "view": "custom:views/dashlets/active-cashiers",
+    "aclScope": "Case",
+    "entityType": "Case",
+    "options": {
+        "fields": {
+            "title": {
+                "type": "varchar",
+                "required": true
+            },
+            "autorefreshInterval": {
+                "type": "enumFloat",
+                "options": [0, 0.5, 1, 2, 5, 10]
+            },
+            "displayRecords": {
+                "type": "enumInt",
+                "options": [5, 10, 15, 20, 30]
+            }
+        },
+        "defaults": {
+            "orderBy": "createdAt",
+            "order": "desc",
+            "title": "Активные продажи (кассиры)",
+            "autorefreshInterval": 0.5,
+            "displayRecords": 15
+        },
+        "layout": [
+            {
+                "rows": [
+                    [{"name": "title"}],
+                    [{"name": "autorefreshInterval"}, {"name": "displayRecords"}]
+                ]
+            }
+        ]
+    }
+}

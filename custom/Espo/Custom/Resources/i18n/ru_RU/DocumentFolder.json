@@ -1,0 +1,12 @@
+{
+    "fields": {
+        "cComplaintActses": "Акты рекламации",
+        "cInstructions": "Инструкции",
+        "cSInstructions": "Инструкции"
+    },
+    "links": {
+        "cComplaintActses": "Акты рекламации",
+        "cInstructions": "Инструкции",
+        "cSInstructions": "Инструкции"
+    }
+}

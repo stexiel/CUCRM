@@ -1,0 +1,84 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "startDate"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    },
+    {
+        "rows": [
+            [
+                {
+                    "name": "locationFindLabel"
+                },
+                {
+                    "name": "locationFindDays"
+                },
+                {
+                    "name": "locationFind"
+                },
+                {
+                    "name": "locationFindFinish"
+                }
+            ],
+            [
+                {
+                    "name": "secondLabel"
+                },
+                {
+                    "name": "secondDays"
+                },
+                {
+                    "name": "secondStartDate"
+                },
+                {
+                    "name": "secondFinishDate"
+                }
+            ],
+            [
+                {
+                    "name": "label3"
+                },
+                {
+                    "name": "days3"
+                },
+                {
+                    "name": "start3"
+                },
+                {
+                    "name": "finishDate3"
+                }
+            ]
+        ],
+        "dynamicLogicVisible": null,
+        "style": "default",
+        "tabBreak": false,
+        "hidden": false,
+        "noteText": null,
+        "noteStyle": "info",
+        "customLabel": "Предпроектные работы"
+    },
+    {
+        "rows": [
+            [
+                false,
+                false
+            ]
+        ],
+        "style": "default",
+        "tabBreak": null,
+        "tabLabel": null,
+        "hidden": null,
+        "noteText": null,
+        "noteStyle": "info",
+        "label": ""
+    }
+]

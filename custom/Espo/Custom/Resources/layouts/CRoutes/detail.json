@@ -1,0 +1,35 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "account"
+                }
+            ],
+            [
+                {
+                    "name": "time"
+                },
+                {
+                    "name": "estimatedTimeOfArrival"
+                }
+            ],
+            [
+                {
+                    "name": "autoNumbMark"
+                },
+                {
+                    "name": "employeeses"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

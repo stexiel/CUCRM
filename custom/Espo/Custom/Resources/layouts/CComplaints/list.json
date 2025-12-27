@@ -1,0 +1,22 @@
+[
+    {
+        "name": "name",
+        "link": true
+    },
+    {
+        "name": "adress",
+        "width": 16
+    },
+    {
+        "name": "receiptDate",
+        "width": 16
+    },
+    {
+        "name": "status",
+        "width": 16
+    },
+    {
+        "name": "content",
+        "width": 16
+    }
+]

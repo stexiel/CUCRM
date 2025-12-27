@@ -1,0 +1,14 @@
+{
+    "labels": {
+        "Create CCardReport": "Создать Табель"
+    },
+    "fields": {
+        "description": "Комментарий",
+        "latitude": "Широта",
+        "location": "Геолокация",
+        "longitude": "Долгота",
+        "phoneNumber": "Номер Телефона",
+        "position": "Должность",
+        "name": "ФИО"
+    }
+}

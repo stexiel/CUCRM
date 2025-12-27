@@ -1,0 +1,45 @@
+{
+    "fields": {
+        "name": {
+            "type": "varchar",
+            "required": true,
+            "maxLength": 255
+        },
+        "type": {
+            "type": "enum",
+            "options": ["direct", "group"],
+            "default": "direct"
+        },
+        "participants": {
+            "type": "linkMultiple",
+            "entity": "User"
+        },
+        "lastMessage": {
+            "type": "text",
+            "notStorable": true
+        },
+        "unreadCount": {
+            "type": "int",
+            "notStorable": true
+        }
+    },
+    "links": {
+        "participants": {
+            "type": "hasMany",
+            "entity": "User",
+            "foreign": "chatRooms",
+            "relationName": "ChatRoomUser"
+        },
+        "messages": {
+            "type": "hasMany",
+            "entity": "ChatMessage",
+            "foreign": "chatRoom"
+        }
+    },
+    "collection": {
+        "orderBy": "modifiedAt",
+        "order": "desc"
+    },
+    "stream": false,
+    "disabled": false
+}

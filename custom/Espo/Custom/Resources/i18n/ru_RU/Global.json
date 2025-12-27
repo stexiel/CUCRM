@@ -1,0 +1,13 @@
+{
+    "scopeNames": {
+        "Account": "Подразделение",
+        "Document": "Инструкция",
+        "CComplaintActs": "Акты рекламации"
+    },
+    "scopeNamesPlural": {
+        "Document": "Инструкции",
+        "CComplaintActs": "Акты рекламации",
+        "Account": "Подразделения",
+        "CMerchandising": "Мерчандайзинг"
+    }
+}

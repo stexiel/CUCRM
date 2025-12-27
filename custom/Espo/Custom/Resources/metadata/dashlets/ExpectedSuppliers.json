@@ -1,0 +1,36 @@
+{
+    "view": "custom:views/dashlets/expected-suppliers",
+    "aclScope": "CTMO",
+    "entityType": "CTMO",
+    "options": {
+        "fields": {
+            "title": {
+                "type": "varchar",
+                "required": true
+            },
+            "autorefreshInterval": {
+                "type": "enumFloat",
+                "options": [0, 0.5, 1, 2, 5, 10]
+            },
+            "displayRecords": {
+                "type": "enumInt",
+                "options": [3, 4, 5, 10, 15]
+            }
+        },
+        "defaults": {
+            "orderBy": "dateOfReceiptOfGoods",
+            "order": "desc",
+            "title": "Ожидаемые поставщики",
+            "autorefreshInterval": 0.5,
+            "displayRecords": 10
+        },
+        "layout": [
+            {
+                "rows": [
+                    [{"name": "title"}],
+                    [{"name": "autorefreshInterval"}, {"name": "displayRecords"}]
+                ]
+            }
+        ]
+    }
+}

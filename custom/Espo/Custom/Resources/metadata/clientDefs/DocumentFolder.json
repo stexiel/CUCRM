@@ -1,0 +1,16 @@
+{
+    "relationshipPanels": {
+        "complaintActses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "instructions": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "sInstructions": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

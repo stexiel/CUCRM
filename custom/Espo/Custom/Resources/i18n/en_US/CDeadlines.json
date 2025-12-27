@@ -1,0 +1,17 @@
+{
+    "fields": {
+        "accounts": "Подразделения",
+        "barcode": "Штрихкод",
+        "gdsCd": "Код товара",
+        "gdsNm": "Товар",
+        "gdsNm1": "Товар надпись",
+        "gdsNm2": "Товар каз.",
+        "uID": "UID"
+    },
+    "links": {
+        "accounts": "Подразделения"
+    },
+    "labels": {
+        "Create CDeadlines": "Create Сроки"
+    }
+}

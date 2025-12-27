@@ -1,0 +1,14 @@
+{
+    "fields": {
+        "locationFindDays": {
+            "visible": {
+                "conditionGroup": [
+                    {
+                        "type": "isTrue",
+                        "attribute": "preProjectJobs"
+                    }
+                ]
+            }
+        }
+    }
+}

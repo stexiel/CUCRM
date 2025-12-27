@@ -1,0 +1,22 @@
+{
+    "fields": {
+        "cAccount1": {
+            "type": "link"
+        },
+        "cPosition": {
+            "type": "varchar",
+            "maxLength": 100,
+            "options": [],
+            "isCustom": true
+        }
+    },
+    "links": {
+        "cAccount1": {
+            "type": "belongsTo",
+            "foreign": "cContacts1",
+            "entity": "Account",
+            "audited": false,
+            "isCustom": true
+        }
+    }
+}

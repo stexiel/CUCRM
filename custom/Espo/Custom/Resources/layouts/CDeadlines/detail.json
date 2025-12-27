@@ -1,0 +1,43 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "gdsCd"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                },
+                {
+                    "name": "accounts"
+                }
+            ],
+            [
+                {
+                    "name": "gdsNm"
+                },
+                {
+                    "name": "gdsNm2"
+                },
+                {
+                    "name": "gdsNm1"
+                }
+            ],
+            [
+                {
+                    "name": "barcode"
+                },
+                {
+                    "name": "uID"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

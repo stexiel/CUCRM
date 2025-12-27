@@ -1,0 +1,26 @@
+{
+    "fields": {
+        "storeStatus": "ТТ",
+        "amountOfGoodsReceived": "Поступление",
+        "collection": "Инкассация",
+        "consignmentNote": "Накладная",
+        "dateOfReceiptOfGoods": "Дата",
+        "pOSHalyk": "POS Халык",
+        "pOSKaspi": "POS Kaspi",
+        "quantity": "Количество",
+        "returnAmountOfGoods": "Возврат",
+        "tTTotalRevenue": "Выручка ТТ",
+        "uID": "UID",
+        "writeoff": "Списание",
+        "supplier": "Поставщик",
+        "ptncd": "PTN_CD",
+        "ptnnm": "PTN_NM"
+    },
+    "links": {
+        "storeStatus": "ТТ",
+        "supplier": "Поставщик"
+    },
+    "labels": {
+        "Create CTMO": "Create TMO"
+    }
+}

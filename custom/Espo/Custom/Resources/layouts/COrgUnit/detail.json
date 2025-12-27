@@ -1,0 +1,39 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "next"
+                }
+            ],
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "second"
+                }
+            ],
+            [
+                {
+                    "name": "orgUnitParent"
+                },
+                {
+                    "name": "orgUnits"
+                }
+            ],
+            [
+                {
+                    "name": "positionCategory"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

@@ -1,0 +1,17 @@
+{
+    "labels": {
+        "Create CEmployees": "Создать Сотрудники"
+    },
+    "fields": {
+        "employee": "Подразделение",
+        "routes": "Маршрут",
+        "phoneNumber": "Номер телефона",
+        "position": "Должность",
+        "name": "ФИО",
+        "cashidGS": "Айди кассира в GS"
+    },
+    "links": {
+        "employee": "Подразделение",
+        "routes": "Маршрут"
+    }
+}

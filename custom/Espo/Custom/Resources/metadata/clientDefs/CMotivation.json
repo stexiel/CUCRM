@@ -1,0 +1,13 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "iconClass": "fas fa-up-long",
+    "relationshipPanels": {
+        "storeStatus": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

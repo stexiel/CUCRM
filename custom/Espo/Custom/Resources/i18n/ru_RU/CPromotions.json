@@ -1,0 +1,16 @@
+{
+    "labels": {
+        "Create CPromotions": "Создать Промо акция"
+    },
+    "fields": {
+        "accounts": "Подразделения",
+        "positionCategories": "Категория подразделений",
+        "document": "Макет",
+        "promotiondeadline": "Срок действия акции",
+        "videoInstruction": "Видеоинструкция"
+    },
+    "links": {
+        "accounts": "Подразделения",
+        "positionCategories": "Категория подразделений"
+    }
+}

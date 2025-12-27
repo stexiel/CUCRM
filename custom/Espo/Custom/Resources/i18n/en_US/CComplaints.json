@@ -1,0 +1,23 @@
+{
+    "fields": {
+        "storeStatus": "Магазин",
+        "adress": "Адрес",
+        "content": "Содержимое",
+        "receiptDate": "Дата поступления",
+        "status": "Статус",
+        "storeCode": "Код магазина"
+    },
+    "links": {
+        "storeStatus": "Магазин"
+    },
+    "labels": {
+        "Create CComplaints": "Create Жалоба ТТ"
+    },
+    "options": {
+        "status": {
+            "На контроле": "На контроле",
+            "В работе": "В работе",
+            "Устранена": "Устранена"
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "fields": {
+        "cAccount": "Account"
+    },
+    "links": {
+        "cAccount": "Account"
+    }
+}

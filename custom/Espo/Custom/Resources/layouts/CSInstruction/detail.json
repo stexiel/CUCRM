@@ -1,0 +1,59 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "file"
+                }
+            ],
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "documentFolder"
+                }
+            ]
+        ],
+        "dynamicLogicVisible": null,
+        "style": "default",
+        "dynamicLogicStyled": null,
+        "tabBreak": false,
+        "hidden": false,
+        "noteText": null,
+        "customLabel": ""
+    },
+    {
+        "rows": [
+            [
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "publishDate"
+                }
+            ],
+            [
+                {
+                    "name": "status"
+                },
+                {
+                    "name": "expirationDate"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                }
+            ]
+        ],
+        "dynamicLogicVisible": null,
+        "style": "default",
+        "tabBreak": false,
+        "tabLabel": null,
+        "hidden": false,
+        "noteText": null,
+        "noteStyle": "info",
+        "customLabel": "Описание"
+    }
+]

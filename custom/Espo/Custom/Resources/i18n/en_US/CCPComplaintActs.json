@@ -1,0 +1,22 @@
+{
+    "fields": {
+        "account": "ТТ",
+        "count": "Количество",
+        "date": "Дата",
+        "file": "Накладная",
+        "nameWarehouse": "Название склада",
+        "summ": "Сумма",
+        "warehouse": "Склад",
+        "storeStatus": "Магазин",
+        "storeCode": "StoreCode",
+        "warehoseCode": "WarehoseCode"
+    },
+    "links": {
+        "account": "ТТ",
+        "warehouse": "Склад",
+        "storeStatus": "Магазин"
+    },
+    "labels": {
+        "Create CCPComplaintActs": "Create Акт рекламации"
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "labels": {
+        "Create CCPComplaintActs": "Создать Акт рекламации"
+    },
+    "fields": {
+        "account": "ТТ",
+        "count": "Количество",
+        "date": "Дата",
+        "file": "Накладная",
+        "nameWarehouse": "Название склада",
+        "summ": "Сумма",
+        "warehouse": "Склад",
+        "name": "Документ №",
+        "storeStatus": "Магазин",
+        "storeCode": "StoreCode",
+        "warehoseCode": "WarehoseCode"
+    },
+    "links": {
+        "account": "ТТ",
+        "warehouse": "Склад",
+        "storeStatus": "Магазин"
+    }
+}

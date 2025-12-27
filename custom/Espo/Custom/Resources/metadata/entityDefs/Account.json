@@ -1,0 +1,156 @@
+{
+    "collection": {
+        "orderBy": "createdAt",
+        "order": "desc",
+        "textFilterFields": [
+            "name",
+            "emailAddress"
+        ],
+        "fullTextSearch": false,
+        "countDisabled": false
+    },
+    "optimisticConcurrencyControl": true,
+    "links": {
+        "cApplicationAXOs": {
+            "type": "hasMany",
+            "foreign": "account",
+            "entity": "CApplicationAXO",
+            "audited": false,
+            "isCustom": true
+        },
+        "cComplaintActses": {
+            "type": "hasMany",
+            "foreign": "account",
+            "entity": "CComplaintActs",
+            "audited": false,
+            "isCustom": true
+        },
+        "cCPComplaintActses": {
+            "type": "hasMany",
+            "foreign": "account",
+            "entity": "CCPComplaintActs",
+            "audited": false,
+            "isCustom": true
+        },
+        "cCEmployeeses": {
+            "type": "hasMany",
+            "relationName": "cAccountEmployees",
+            "foreign": "employee",
+            "entity": "CEmployees",
+            "audited": false,
+            "isCustom": true
+        },
+        "cInstructions": {
+            "type": "hasMany",
+            "relationName": "cAccountInstruction",
+            "foreign": "accounts",
+            "entity": "CInstruction",
+            "audited": false,
+            "isCustom": true
+        },
+        "cPositionCategory": {
+            "type": "belongsTo",
+            "foreign": "accounts",
+            "entity": "CPositionCategory",
+            "audited": false,
+            "isCustom": true
+        },
+        "cPromotions": {
+            "type": "belongsTo",
+            "foreign": "accounts",
+            "entity": "CPromotions",
+            "audited": false,
+            "isCustom": true
+        },
+        "cRouteses": {
+            "type": "hasMany",
+            "foreign": "account",
+            "entity": "CRoutes",
+            "audited": false,
+            "isCustom": true
+        },
+        "cContacts1": {
+            "type": "hasMany",
+            "foreign": "cAccount1",
+            "entity": "Contact",
+            "audited": false,
+            "isCustom": true
+        },
+        "cSInstructions": {
+            "type": "hasMany",
+            "relationName": "cSInstructionAccount",
+            "foreign": "accounts",
+            "entity": "CSInstruction",
+            "audited": false,
+            "isCustom": true
+        },
+        "cDeadlineses": {
+            "type": "hasMany",
+            "relationName": "cDeadlinesAccount",
+            "foreign": "accounts",
+            "entity": "CDeadlines",
+            "audited": false,
+            "isCustom": true
+        },
+        "cUsers": {
+            "type": "hasMany",
+            "foreign": "cAccount",
+            "entity": "User",
+            "audited": false,
+            "isCustom": true
+        }
+    },
+    "fields": {
+        "cApplicationAXOs": {
+            "type": "linkMultiple"
+        },
+        "cComplaintActses": {
+            "type": "linkMultiple"
+        },
+        "cCPComplaintActses": {
+            "type": "linkMultiple"
+        },
+        "cCEmployeeses": {
+            "type": "linkMultiple"
+        },
+        "cInstructions": {
+            "type": "linkMultiple"
+        },
+        "cPositionCategory": {
+            "type": "link"
+        },
+        "cPromotions": {
+            "type": "link"
+        },
+        "cRouteses": {
+            "type": "linkMultiple"
+        },
+        "cLatitude": {
+            "type": "varchar",
+            "maxLength": 100,
+            "options": [],
+            "isCustom": true
+        },
+        "cLongitude": {
+            "type": "varchar",
+            "maxLength": 100,
+            "options": [],
+            "isCustom": true
+        },
+        "cRadiusMeters": {
+            "type": "varchar",
+            "maxLength": 100,
+            "options": [],
+            "isCustom": true
+        },
+        "cContacts1": {
+            "type": "linkMultiple"
+        },
+        "cSInstructions": {
+            "type": "linkMultiple"
+        },
+        "cDeadlineses": {
+            "type": "linkMultiple"
+        }
+    }
+}

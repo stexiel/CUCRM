@@ -1,0 +1,27 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "storeStatus"
+                },
+                {
+                    "name": "date"
+                }
+            ],
+            [
+                {
+                    "name": "sales"
+                },
+                {
+                    "name": "avarageCheck"
+                },
+                {
+                    "name": "numberofproduct"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

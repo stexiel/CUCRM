@@ -1,0 +1,18 @@
+{
+    "fields": {
+        "cFile": {
+            "type": "file",
+            "sourceList": [],
+            "accept": [],
+            "isCustom": true
+        }
+    },
+    "links": {
+        "cFile": {
+            "type": "belongsTo",
+            "entity": "Attachment",
+            "skipOrmDefs": true,
+            "utility": true
+        }
+    }
+}

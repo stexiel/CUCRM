@@ -1,0 +1,65 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "uID"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "promoNo"
+                },
+                {
+                    "name": "begDate"
+                },
+                {
+                    "name": "endDate"
+                }
+            ],
+            [
+                {
+                    "name": "gdsCd"
+                },
+                {
+                    "name": "barcode"
+                },
+                {
+                    "name": "gdsNm1"
+                }
+            ],
+            [
+                {
+                    "name": "gdsNm"
+                },
+                {
+                    "name": "gdsNm2"
+                }
+            ],
+            [
+                {
+                    "name": "price"
+                },
+                {
+                    "name": "discount"
+                },
+                {
+                    "name": "priceDisc"
+                }
+            ],
+            [
+                {
+                    "name": "document"
+                },
+                {
+                    "name": "percentDiscount"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

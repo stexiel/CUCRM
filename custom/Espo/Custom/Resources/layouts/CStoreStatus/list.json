@@ -1,0 +1,89 @@
+[
+    {
+        "name": "storeCode",
+        "width": 16
+    },
+    {
+        "name": "name",
+        "width": 10,
+        "link": true,
+        "align": "left"
+    },
+    {
+        "name": "storeType",
+        "width": 16
+    },
+    {
+        "name": "storeStatus",
+        "width": 16
+    },
+    {
+        "name": "useYesNo",
+        "width": 16
+    },
+    {
+        "name": "companyRegistrationNumber",
+        "width": 16
+    },
+    {
+        "name": "representative",
+        "width": 16
+    },
+    {
+        "name": "phoneNumber",
+        "width": 16
+    },
+    {
+        "name": "faxNumber",
+        "width": 16
+    },
+    {
+        "name": "cluster",
+        "width": 16
+    },
+    {
+        "name": "region1",
+        "width": 16
+    },
+    {
+        "name": "region2",
+        "width": 16
+    },
+    {
+        "name": "region3",
+        "width": 16
+    },
+    {
+        "name": "address",
+        "width": 16
+    },
+    {
+        "name": "storeOwnerManager",
+        "width": 16
+    },
+    {
+        "name": "supervisor",
+        "width": 16
+    },
+    {
+        "name": "iPAddressOfTheStore",
+        "width": 16
+    },
+    {
+        "name": "storeOpeningDate",
+        "width": 16
+    },
+    {
+        "name": "closingDate",
+        "width": 16
+    },
+    {
+        "name": "salesPriceCategory",
+        "width": 16
+    },
+    {
+        "name": "teams",
+        "width": 16,
+        "notSortable": true
+    }
+]

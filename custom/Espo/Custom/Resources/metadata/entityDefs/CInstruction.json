@@ -1,0 +1,184 @@
+{
+    "fields": {
+        "name": {
+            "type": "varchar",
+            "required": true,
+            "pattern": "$noBadCharacters"
+        },
+        "description": {
+            "type": "text"
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "modifiedAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "modifiedBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "assignedUser": {
+            "type": "link",
+            "required": false,
+            "view": "views/fields/assigned-user"
+        },
+        "teams": {
+            "type": "linkMultiple",
+            "view": "views/fields/teams"
+        },
+        "accounts": {
+            "type": "linkMultiple"
+        },
+        "complaintActs": {
+            "type": "linkOne"
+        },
+        "documentFolder": {
+            "type": "link"
+        },
+        "expirationDate": {
+            "notNull": false,
+            "type": "date",
+            "isCustom": true
+        },
+        "file": {
+            "type": "file",
+            "sourceList": [],
+            "accept": [],
+            "isCustom": true
+        },
+        "publishDate": {
+            "notNull": false,
+            "type": "date",
+            "isCustom": true
+        },
+        "status": {
+            "type": "enum",
+            "options": [
+                "Черновик",
+                "Действующий",
+                "Отменен",
+                "Просрочен"
+            ],
+            "default": "Черновик",
+            "style": {
+                "Черновик": null,
+                "Действующий": "primary",
+                "Отменен": "info",
+                "Просрочен": "danger"
+            },
+            "maxLength": 100,
+            "isCustom": true
+        },
+        "type": {
+            "type": "enum",
+            "options": [
+                "",
+                "Контракт",
+                "NDA соглашение о неразглашении",
+                "EULA лицензионное соглашение с конечным пользователем",
+                "Лицензионное соглашение"
+            ],
+            "style": {
+                "": null,
+                "Контракт": null,
+                "NDA соглашение о неразглашении": null,
+                "EULA лицензионное соглашение с конечным пользователем": null,
+                "Лицензионное соглашение": null
+            },
+            "maxLength": 100,
+            "isCustom": true
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "modifiedBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "assignedUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "teams": {
+            "type": "hasMany",
+            "entity": "Team",
+            "relationName": "entityTeam",
+            "layoutRelationshipsDisabled": true
+        },
+        "accounts": {
+            "type": "hasMany",
+            "relationName": "cAccountInstruction",
+            "foreign": "cInstructions",
+            "entity": "Account",
+            "audited": false,
+            "isCustom": true
+        },
+        "complaintActs": {
+            "type": "hasOne",
+            "foreign": "instruction",
+            "entity": "CComplaintActs",
+            "isCustom": true
+        },
+        "documentFolder": {
+            "type": "belongsTo",
+            "foreign": "cInstructions",
+            "entity": "DocumentFolder",
+            "audited": false,
+            "isCustom": true
+        },
+        "file": {
+            "type": "belongsTo",
+            "entity": "Attachment",
+            "skipOrmDefs": true,
+            "utility": true
+        }
+    },
+    "collection": {
+        "orderBy": "createdAt",
+        "order": "desc",
+        "textFilterFields": [
+            "name"
+        ],
+        "fullTextSearch": false,
+        "countDisabled": false
+    },
+    "indexes": {
+        "name": {
+            "columns": [
+                "name",
+                "deleted"
+            ]
+        },
+        "assignedUser": {
+            "columns": [
+                "assignedUserId",
+                "deleted"
+            ]
+        },
+        "createdAt": {
+            "columns": [
+                "createdAt"
+            ]
+        },
+        "createdAtId": {
+            "unique": true,
+            "columns": [
+                "createdAt",
+                "id"
+            ]
+        }
+    },
+    "optimisticConcurrencyControl": false
+}

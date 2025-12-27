@@ -1,0 +1,22 @@
+{
+    "fields": {
+        "startDate": "Начало",
+        "preProjectJobs": "Предпроектные работы",
+        "permissions": "Разрешения",
+        "operations": "Операции",
+        "marketing": "Маркетинг",
+        "locationFind": "Начало",
+        "locationFindFinish": "Конец",
+        "locationFindDays": "Длительность(дня)",
+        "locationFindLabel": "Название",
+        "secondLabel": "Название 2",
+        "secondDays": "Длительность(дня)",
+        "secondStartDate": "Начало",
+        "secondFinishDate": "Конец",
+        "start3": "Начало"
+    },
+    "links": [],
+    "labels": {
+        "Create CGantDiagram": "Create Диаграмма Ганта"
+    }
+}

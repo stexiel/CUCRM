@@ -1,0 +1,35 @@
+[
+    {
+        "name": "uID",
+        "width": 16
+    },
+    {
+        "name": "name",
+        "link": true
+    },
+    {
+        "name": "gdsCd",
+        "width": 16
+    },
+    {
+        "name": "barcode",
+        "width": 16
+    },
+    {
+        "name": "gdsNm",
+        "width": 16
+    },
+    {
+        "name": "gdsNm1",
+        "width": 16
+    },
+    {
+        "name": "gdsNm2",
+        "width": 16
+    },
+    {
+        "name": "accounts",
+        "width": 16,
+        "notSortable": true
+    }
+]

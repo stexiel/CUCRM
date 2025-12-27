@@ -1,0 +1,48 @@
+{
+    "fields": {
+        "message": {
+            "type": "text",
+            "required": true
+        },
+        "fromUser": {
+            "type": "link",
+            "entity": "User"
+        },
+        "toUser": {
+            "type": "link",
+            "entity": "User"
+        },
+        "chatRoom": {
+            "type": "link",
+            "entity": "ChatRoom"
+        },
+        "isRead": {
+            "type": "bool",
+            "default": false
+        },
+        "attachments": {
+            "type": "attachmentMultiple"
+        }
+    },
+    "links": {
+        "fromUser": {
+            "type": "belongsTo",
+            "entity": "User",
+            "foreign": "chatMessagesSent"
+        },
+        "toUser": {
+            "type": "belongsTo",
+            "entity": "User",
+            "foreign": "chatMessagesReceived"
+        },
+        "chatRoom": {
+            "type": "belongsTo",
+            "entity": "ChatRoom",
+            "foreign": "messages"
+        }
+    },
+    "collection": {
+        "orderBy": "createdAt",
+        "order": "desc"
+    }
+}

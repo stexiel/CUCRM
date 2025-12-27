@@ -1,0 +1,16 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "relationshipPanels": {
+        "accounts": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "positionCategories": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

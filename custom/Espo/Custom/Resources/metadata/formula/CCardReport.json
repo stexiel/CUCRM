@@ -1,0 +1,3 @@
+{
+    "beforeSaveCustomScript": "$employeeId = record\\findOne('CEmployees', 'createdAt', 'desc', 'phoneNumber=', phoneNumber);\n\nname = record\\attribute('CEmployees', $employeeId, 'name');\nposition = record\\attribute('CEmployees', $employeeId, 'position');\n\n\nifThenElse(\n    phoneNumber == '87759611101',\n    location = 'Отсутствует по локации',\n    (\n        $accountId = record\\findRelatedOne('CEmployees', $employeeId, 'employee', 'createdAt', 'desc');\n        location = record\\attribute('Account', $accountId, 'name')\n    )\n);\n"
+}

@@ -1,0 +1,54 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "storeStatus"
+                },
+                {
+                    "name": "dateOfReceiptOfGoods"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "amountOfGoodsReceived"
+                },
+                {
+                    "name": "returnAmountOfGoods"
+                },
+                {
+                    "name": "writeoff"
+                }
+            ],
+            [
+                {
+                    "name": "tTTotalRevenue"
+                },
+                {
+                    "name": "pOSHalyk"
+                },
+                {
+                    "name": "pOSKaspi"
+                }
+            ],
+            [
+                {
+                    "name": "collection"
+                },
+                {
+                    "name": "description"
+                }
+            ],
+            [
+                {
+                    "name": "consignmentNote"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

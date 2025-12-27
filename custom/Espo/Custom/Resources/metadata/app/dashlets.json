@@ -1,0 +1,80 @@
+{
+    "ExpectedSuppliers": {
+        "view": "custom:views/dashlets/expected-suppliers",
+        "aclScope": "CTMO",
+        "entityType": "CTMO",
+        "options": {
+            "fields": {
+                "title": {
+                    "type": "varchar",
+                    "required": true
+                },
+                "autorefreshInterval": {
+                    "type": "enumFloat",
+                    "options": [0, 0.5, 1, 2, 5, 10]
+                },
+                "displayRecords": {
+                    "type": "enumInt",
+                    "options": [3, 4, 5, 10, 15]
+                }
+            },
+            "defaults": {
+                "title": "Ожидаемые поставщики",
+                "autorefreshInterval": 0.5,
+                "displayRecords": 10
+            }
+        }
+    },
+    "YesterdaySales": {
+        "view": "custom:views/dashlets/yesterday-sales",
+        "aclScope": "CMotivation",
+        "entityType": "CMotivation",
+        "options": {
+            "fields": {
+                "title": {
+                    "type": "varchar",
+                    "required": true
+                },
+                "autorefreshInterval": {
+                    "type": "enumFloat",
+                    "options": [0, 0.5, 1, 2, 5, 10]
+                },
+                "displayRecords": {
+                    "type": "enumInt",
+                    "options": [5, 10, 15, 20]
+                }
+            },
+            "defaults": {
+                "title": "Продажи вчера",
+                "autorefreshInterval": 0.5,
+                "displayRecords": 10
+            }
+        }
+    },
+    "ActiveCashiers": {
+        "view": "custom:views/dashlets/active-cashiers",
+        "aclScope": "Case",
+        "entityType": "Case",
+        "options": {
+            "fields": {
+                "title": {
+                    "type": "varchar",
+                    "required": true
+                },
+                "autorefreshInterval": {
+                    "type": "enumFloat",
+                    "options": [0, 0.5, 1, 2, 5, 10]
+                },
+                "displayRecords": {
+                    "type": "enumInt",
+                    "options": [5, 10, 15, 20, 30]
+                }
+            },
+            "defaults": {
+                "title": "Активные продажи (кассиры)",
+                "autorefreshInterval": 0.5,
+                "displayRecords": 15
+            }
+        }
+    }
+}

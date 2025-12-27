@@ -1,0 +1,22 @@
+{
+    "fields": {
+        "cAccount": {
+            "type": "link"
+        }
+    },
+    "links": {
+        "cAccount": {
+            "type": "belongsTo",
+            "foreign": "cUsers",
+            "entity": "Account",
+            "audited": false,
+            "isCustom": true
+        },
+        "chatRooms": {
+            "type": "hasMany",
+            "entity": "ChatRoom",
+            "foreign": "participants",
+            "relationName": "ChatRoomUser"
+        }
+    }
+}

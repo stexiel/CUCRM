@@ -1,0 +1,13 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "iconClass": "fas fa-box",
+    "relationshipPanels": {
+        "tMOs": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

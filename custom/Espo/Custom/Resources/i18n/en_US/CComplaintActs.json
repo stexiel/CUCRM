@@ -1,0 +1,29 @@
+{
+    "fields": {
+        "account": "ТТ",
+        "count": "Количество",
+        "date": "Дата",
+        "file": "Накладная",
+        "nameStore": "NameStore",
+        "nameWarehouse": "Название склада",
+        "storeCode": "StoreCode",
+        "summ": "Сумма",
+        "warehoseCode": "WarehoseCode",
+        "documentFolder": "Папка документов",
+        "instruction": "Документ",
+        "storeStatus": "Магазин",
+        "warehouse": "Склад",
+        "sInstruction": "Документ"
+    },
+    "links": {
+        "account": "ТТ",
+        "documentFolder": "Папка документов",
+        "instruction": "Документ",
+        "storeStatus": "Магазин",
+        "warehouse": "Склад",
+        "sInstruction": "Документ"
+    },
+    "labels": {
+        "Create CComplaintActs": "Создать Акты рекламации"
+    }
+}

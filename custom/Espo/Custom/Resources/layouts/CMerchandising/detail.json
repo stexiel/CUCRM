@@ -1,0 +1,18 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "photo"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

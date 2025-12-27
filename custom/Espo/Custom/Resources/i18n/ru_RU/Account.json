@@ -1,0 +1,36 @@
+{
+    "labels": {
+        "Create Account": "Создать Подразделение"
+    },
+    "fields": {
+        "cApplicationAXOs": "Заявки в АХО",
+        "cComplaintActses": "Complaint Actses",
+        "cCPComplaintActses": "PComplaint Actses",
+        "cCEmployeeses": "Сотрудник",
+        "cInstructions": "Документы",
+        "cPositionCategory": "Категория",
+        "cPromotions": "Промо акция",
+        "cRouteses": "Routeses",
+        "cLatitude": "Широта",
+        "cLongitude": "Долгота",
+        "cRadiusMeters": "Диапазон(М)",
+        "cContacts1": "Контакты",
+        "cSInstructions": "Документы",
+        "cDeadlineses": "Сроки",
+        "cUsers": "Users"
+    },
+    "links": {
+        "cApplicationAXOs": "Заявки в АХО",
+        "cComplaintActses": "Complaint Actses",
+        "cCPComplaintActses": "PComplaint Actses",
+        "cCEmployeeses": "Сотрудник",
+        "cInstructions": "Документы",
+        "cPositionCategory": "Категория",
+        "cPromotions": "Промо акция",
+        "cRouteses": "Routeses",
+        "cContacts1": "Контакты",
+        "cSInstructions": "Документы",
+        "cDeadlineses": "Сроки",
+        "cUsers": "Users"
+    }
+}

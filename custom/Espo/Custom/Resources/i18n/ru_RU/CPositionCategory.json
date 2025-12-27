@@ -1,0 +1,15 @@
+{
+    "labels": {
+        "Create CPositionCategory": "Создать Категория структур"
+    },
+    "fields": {
+        "accounts": "Подразделения",
+        "orgUnits": "Структуры",
+        "promotionses": "Промо акции"
+    },
+    "links": {
+        "accounts": "Подразделения",
+        "orgUnits": "Структуры",
+        "promotionses": "Промо акции"
+    }
+}

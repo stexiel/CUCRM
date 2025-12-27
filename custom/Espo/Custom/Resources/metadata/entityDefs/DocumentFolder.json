@@ -1,0 +1,30 @@
+{
+    "links": {
+        "cComplaintActses": {
+            "type": "hasMany",
+            "foreign": "documentFolder",
+            "entity": "CComplaintActs",
+            "audited": false,
+            "isCustom": true
+        },
+        "cInstructions": {
+            "type": "hasMany",
+            "foreign": "documentFolder",
+            "entity": "CInstruction",
+            "audited": false,
+            "isCustom": true
+        },
+        "cSInstructions": {
+            "type": "hasMany",
+            "foreign": "documentFolder",
+            "entity": "CSInstruction",
+            "audited": false,
+            "isCustom": true
+        }
+    },
+    "fields": {
+        "cComplaintActses": {
+            "type": "linkMultiple"
+        }
+    }
+}

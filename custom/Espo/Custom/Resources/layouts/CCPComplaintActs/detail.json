@@ -1,0 +1,43 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "date"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "warehouse"
+                },
+                {
+                    "name": "account"
+                },
+                {
+                    "name": "storeStatus"
+                }
+            ],
+            [
+                {
+                    "name": "summ"
+                },
+                {
+                    "name": "count"
+                },
+                {
+                    "name": "file"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

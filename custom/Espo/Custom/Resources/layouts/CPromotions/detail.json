@@ -1,0 +1,37 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "promotiondeadline"
+                }
+            ],
+            [
+                {
+                    "name": "positionCategories"
+                },
+                {
+                    "name": "accounts"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                }
+            ],
+            [
+                {
+                    "name": "document"
+                },
+                {
+                    "name": "videoInstruction"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

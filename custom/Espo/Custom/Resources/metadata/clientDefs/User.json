@@ -1,0 +1,8 @@
+{
+    "relationshipPanels": {
+        "account": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

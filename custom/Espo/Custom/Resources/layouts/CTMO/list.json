@@ -1,0 +1,48 @@
+[
+    {
+        "name": "storeStatus",
+        "width": 16
+    },
+    {
+        "name": "dateOfReceiptOfGoods",
+        "width": 16
+    },
+    {
+        "name": "name",
+        "width": 25,
+        "link": true,
+        "align": "left"
+    },
+    {
+        "name": "amountOfGoodsReceived",
+        "width": 16
+    },
+    {
+        "name": "returnAmountOfGoods",
+        "width": 16
+    },
+    {
+        "name": "supplier",
+        "width": 16
+    },
+    {
+        "name": "tTTotalRevenue",
+        "width": 16
+    },
+    {
+        "name": "pOSHalyk",
+        "width": 16
+    },
+    {
+        "name": "pOSKaspi",
+        "width": 16
+    },
+    {
+        "name": "collection",
+        "width": 16
+    },
+    {
+        "name": "consignmentNote",
+        "width": 16
+    }
+]

@@ -1,0 +1,12 @@
+{
+    "fields": {
+        "tMOs": "TMO",
+        "code": "Код"
+    },
+    "links": {
+        "tMOs": "TMO"
+    },
+    "labels": {
+        "Create CSupplier": "Create Поставщик"
+    }
+}

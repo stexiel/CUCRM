@@ -1,0 +1,17 @@
+{
+    "fields": {
+        "next": "Порядковый номер",
+        "second": "Второй этап",
+        "positionCategory": "Категория структуры",
+        "orgUnits": "Структура",
+        "orgUnitParent": "Родительская структура"
+    },
+    "links": {
+        "positionCategory": "Категория структуры",
+        "orgUnits": "Структура",
+        "orgUnitParent": "Родительская структура"
+    },
+    "labels": {
+        "Create COrgUnit": "Create Структура"
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "labels": {
+        "Create CMotivation": "Создать Мотивация"
+    },
+    "fields": {
+        "storeStatus": "ТТ",
+        "date": "Дата",
+        "sales": "Продажа",
+        "avarageCheck": "Средний чек",
+        "numberofproduct": "Кол товаров в чеке",
+        "uID": "UID",
+        "storeCode": "StoreCode",
+        "nameStore": "NameStore"
+    },
+    "links": {
+        "storeStatus": "ТТ"
+    }
+}

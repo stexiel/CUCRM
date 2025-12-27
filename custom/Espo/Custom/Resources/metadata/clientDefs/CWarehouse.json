@@ -1,0 +1,16 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "relationshipPanels": {
+        "complaintActses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "cPComplaintActses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

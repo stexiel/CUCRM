@@ -1,0 +1,23 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "relationshipPanels": {
+        "accounts": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "complaintActs": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "documentFolder": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    },
+    "kanbanViewMode": false,
+    "color": null,
+    "iconClass": "fas fa-file-lines"
+}

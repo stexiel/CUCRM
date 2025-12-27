@@ -1,0 +1,3 @@
+{
+    "beforeSaveApiScript": "if (entity\\isNew() && !recordService\\skipDuplicateCheck()) {\n    $id = record\\findOne('CMotivation', null, null, 'uID=', uID);\n    if ($id) { recordService\\throwDuplicateConflict($id); \n    } \n}\n$idStore = record\\findOne('CStoreStatus', null, null, 'storeCode=', storeCode);\nif($idStore){\n    storeStatusId = $idStore; \n    storeStatusName = record\\attribute('CStoreStatus', $idStore, 'name') \n}else{\n   storeStatusId=record\\create('CStoreStatus', 'storeCode', storeCode, 'name', nameStore);\n    }\n    \n    nameStore = null;"
+}

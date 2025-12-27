@@ -1,0 +1,37 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "receiptDate"
+                }
+            ],
+            [
+                {
+                    "name": "storeCode"
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "adress"
+                }
+            ],
+            [
+                {
+                    "name": "content"
+                },
+                {
+                    "name": "status"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

@@ -1,0 +1,59 @@
+{
+    "kanbanViewMode": false,
+    "color": "#edc755",
+    "iconClass": "fas fa-building",
+    "relationshipPanels": {
+        "applicationAXOs": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "complaintActses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "cPComplaintActses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "cEmployeeses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "instructions": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "positionCategory": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "promotions": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "routeses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "cApplicationAXOs": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "contacts1": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "sInstructions": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "deadlineses": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "users": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

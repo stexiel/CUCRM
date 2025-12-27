@@ -1,0 +1,21 @@
+{
+    "labels": {
+        "Create CPromoTest": "Создать Промо тест"
+    },
+    "fields": {
+        "barcode": "Штрихкод",
+        "begDate": "Дата начало",
+        "discount": "Скидка",
+        "endDate": "Дата окончания",
+        "gdsCd": "Код товара",
+        "gdsNm": "Товар",
+        "gdsNm1": "Товар надпись",
+        "gdsNm2": "Товар каз.",
+        "price": "Цена",
+        "priceDisc": "Цена со скидкой",
+        "promoNo": "Номер акции",
+        "uID": "UID",
+        "document": "Документ",
+        "percentDiscount": "PercentDiscount"
+    }
+}

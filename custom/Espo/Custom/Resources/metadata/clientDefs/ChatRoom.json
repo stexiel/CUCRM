@@ -1,0 +1,21 @@
+{
+    "controller": "controllers/record",
+    "iconClass": "fas fa-comments",
+    "views": {
+        "list": "custom:views/chat/index"
+    },
+    "recordViews": {
+        "list": "custom:views/chat/index"
+    },
+    "defaultSidePanel": {
+        "edit": false,
+        "detail": false,
+        "editSmall": false,
+        "detailSmall": false
+    },
+    "menu": {
+        "list": {
+            "buttons": []
+        }
+    }
+}

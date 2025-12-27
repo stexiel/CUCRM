@@ -1,0 +1,15 @@
+{
+    "labels": {
+        "Create CWarehouse": "Создать Склад"
+    },
+    "fields": {
+        "complaintActses": "Акты рекламации",
+        "cPComplaintActses": "Акты рекламации",
+        "code": "Код склада",
+        "name": "Название склада"
+    },
+    "links": {
+        "complaintActses": "Акты рекламации",
+        "cPComplaintActses": "Акты рекламации"
+    }
+}

@@ -1,0 +1,90 @@
+[
+    {
+        "rows": [
+            [
+                {
+                    "name": "storeCode"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "storeType"
+                },
+                {
+                    "name": "storeStatus"
+                },
+                {
+                    "name": "useYesNo"
+                },
+                {
+                    "name": "companyRegistrationNumber"
+                }
+            ],
+            [
+                {
+                    "name": "representative"
+                },
+                {
+                    "name": "phoneNumber"
+                },
+                {
+                    "name": "faxNumber"
+                }
+            ],
+            [
+                {
+                    "name": "cluster"
+                },
+                {
+                    "name": "region1"
+                },
+                {
+                    "name": "region2"
+                },
+                {
+                    "name": "region3"
+                }
+            ],
+            [
+                {
+                    "name": "address"
+                },
+                {
+                    "name": "storeOwnerManager"
+                },
+                {
+                    "name": "supervisor"
+                }
+            ],
+            [
+                {
+                    "name": "iPAddressOfTheStore"
+                },
+                {
+                    "name": "salesPriceCategory"
+                }
+            ],
+            [
+                {
+                    "name": "storeOpeningDate"
+                },
+                {
+                    "name": "closingDate"
+                }
+            ],
+            [
+                {
+                    "name": "teams"
+                },
+                {
+                    "name": "assignedUser"
+                }
+            ]
+        ],
+        "style": "default",
+        "label": "Overview"
+    }
+]

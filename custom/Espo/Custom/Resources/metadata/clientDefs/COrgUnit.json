@@ -1,0 +1,20 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy"
+    ],
+    "relationshipPanels": {
+        "positionCategory": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "orgUnits": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        },
+        "orgUnitParent": {
+            "layout": null,
+            "selectPrimaryFilterName": null
+        }
+    }
+}

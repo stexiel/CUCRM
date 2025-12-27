@@ -1,0 +1,12 @@
+{
+    "labels": {
+        "Create CSupplier": "Создать Поставщик"
+    },
+    "fields": {
+        "tMOs": "TMO",
+        "code": "Код"
+    },
+    "links": {
+        "tMOs": "TMO"
+    }
+}

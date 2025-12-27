@@ -1,0 +1,14 @@
+{
+  "labels": {
+    "Primary": "Primario",
+    "Opted Out": "Cancellato",
+    "Invalid": "Non valido"
+  },
+  "fields": {
+    "optOut": "Cancellato",
+    "invalid": "Invalido"
+  },
+  "presetFilters": {
+    "orphan": "Orfano"
+  }
+}

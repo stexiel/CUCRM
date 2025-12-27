@@ -1,0 +1,27 @@
+{
+    "labels": {
+        "Create CTMO": "Создать TMO"
+    },
+    "fields": {
+        "storeStatus": "ТТ",
+        "amountOfGoodsReceived": "Поступление",
+        "collection": "Инкассация",
+        "consignmentNote": "Накладная",
+        "dateOfReceiptOfGoods": "Дата",
+        "pOSHalyk": "POS Халык",
+        "pOSKaspi": "POS Kaspi",
+        "quantity": "Количество",
+        "returnAmountOfGoods": "Возврат",
+        "tTTotalRevenue": "Выручка ТТ",
+        "uID": "UID",
+        "writeoff": "Списание",
+        "name": "Документ №",
+        "supplier": "Поставщик",
+        "ptncd": "PTN_CD",
+        "ptnnm": "PTN_NM"
+    },
+    "links": {
+        "storeStatus": "ТТ",
+        "supplier": "Поставщик"
+    }
+}

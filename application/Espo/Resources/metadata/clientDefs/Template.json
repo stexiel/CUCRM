@@ -1,0 +1,9 @@
+{
+    "controller": "controllers/record",
+    "recordViews": {
+        "detail": "views/template/record/detail",
+        "edit": "views/template/record/edit"
+    },
+    "mergeDisabled": true,
+    "iconClass": "fas fa-file-pdf"
+}

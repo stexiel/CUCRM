@@ -1,0 +1,32 @@
+[
+    {
+        "name": "date",
+        "width": 16
+    },
+    {
+        "name": "name",
+        "width": 16,
+        "link": true,
+        "align": "left"
+    },
+    {
+        "name": "warehouse",
+        "width": 16
+    },
+    {
+        "name": "storeStatus",
+        "width": 16
+    },
+    {
+        "name": "summ",
+        "width": 16
+    },
+    {
+        "name": "count",
+        "width": 16
+    },
+    {
+        "name": "file",
+        "width": 16
+    }
+]

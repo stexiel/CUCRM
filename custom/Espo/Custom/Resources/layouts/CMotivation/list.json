@@ -1,0 +1,22 @@
+[
+    {
+        "name": "storeStatus",
+        "width": 16
+    },
+    {
+        "name": "date",
+        "width": 16
+    },
+    {
+        "name": "sales",
+        "width": 16
+    },
+    {
+        "name": "avarageCheck",
+        "width": 16
+    },
+    {
+        "name": "numberofproduct",
+        "width": 16
+    }
+]

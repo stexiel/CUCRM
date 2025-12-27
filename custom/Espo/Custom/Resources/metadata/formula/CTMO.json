@@ -1,0 +1,4 @@
+{
+    "beforeSaveApiScript": "if (entity\\isNew() && !recordService\\skipDuplicateCheck()) {\n    $id = record\\findOne('CTMO', null, null, 'uID=', uID);\n    if ($id) { recordService\\throwDuplicateConflict($id); \n    } \n}\nifThen(name == 'Revenue', name = 'Выручка');\nifThen(name == 'No invoice', name = 'Возврат');\n\nteamsIds = record\\attribute('CStoreStatus', storeStatusId, 'teamsIds');\n\nif( ptncd != 'not'){\n$idSupplier = record\\findOne('CSupplier', null, null, 'code=', ptncd);\n\nif($idSupplier){\n    supplierId = $idSupplier; \n}else{\n   supplierId=record\\create('CSupplier', 'code', ptncd, 'name', ptnnm);\n    }\n}  \n ptnnm=null;\n ptncd=null;",
+    "beforeSaveCustomScript": null
+}

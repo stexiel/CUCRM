@@ -1,0 +1,39 @@
+{
+    "labels": {
+        "Create CStoreStatus": "Создать Статус магазина"
+    },
+    "fields": {
+        "complaintActses": "ТТ",
+        "complaintses": "Жалобы",
+        "cPComplaintActses": "Акты рекламации",
+        "tMOs": "T MOs",
+        "address": "Адрес",
+        "closingDate": "Дата закрытия",
+        "cluster": "Кластер",
+        "companyRegistrationNumber": "Регистрационный номер компании",
+        "faxNumber": "Номер факса",
+        "iPAddressOfTheStore": "IP-адрес магазина",
+        "phoneNumber": "Телефонный номер",
+        "region1": "Регион 1",
+        "region2": "Регион 2",
+        "region3": "Регион 3",
+        "representative": "Представитель",
+        "salesPriceCategory": "Категория цен продаж",
+        "storeCode": "Код магазина",
+        "storeOpeningDate": "Дата открытия магазина",
+        "storeOwnerManager": "Владелец/менеджер магазина",
+        "storeStatus": "Состояние магазина",
+        "storeType": "Тип магазина",
+        "supervisor": "Супервайзер",
+        "useYesNo": "Использовать Да/Нет",
+        "name": "Название магазина(RU)",
+        "motivations": "Motivations"
+    },
+    "links": {
+        "complaintActses": "ТТ",
+        "complaintses": "Жалобы",
+        "cPComplaintActses": "Акты рекламации",
+        "tMOs": "T MOs",
+        "motivations": "Motivations"
+    }
+}

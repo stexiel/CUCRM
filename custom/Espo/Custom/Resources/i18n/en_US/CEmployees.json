@@ -1,0 +1,16 @@
+{
+    "fields": {
+        "employee": "Подразделение",
+        "routes": "Маршрут",
+        "phoneNumber": "Номер телефона",
+        "position": "Должность",
+        "cashidGS": "Айди кассира в GS"
+    },
+    "links": {
+        "employee": "Подразделение",
+        "routes": "Маршрут"
+    },
+    "labels": {
+        "Create CEmployees": "Create Сотрудники"
+    }
+}
