@@ -289,6 +289,18 @@ class ChatWebSocketServer
                 case 'typing':
                     $this->handleTyping($client, $data);
                     break;
+                case 'deleteRoom':
+                    $this->handleDeleteRoom($client, $data);
+                    break;
+                case 'searchMessages':
+                    $this->handleSearchMessages($client, $data);
+                    break;
+                case 'searchAllRooms':
+                    $this->handleSearchAllRooms($client, $data);
+                    break;
+                case 'restoreRoom':
+                    $this->handleRestoreRoom($client, $data);
+                    break;
             }
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage() . "\n";
@@ -428,9 +440,12 @@ class ChatWebSocketServer
         $limit = $data['limit'] ?? 50;
 
         $sql = "
-            SELECT cm.*, u.user_name, u.first_name, u.last_name
+            SELECT cm.*, u.user_name, u.first_name, u.last_name,
+                   ru.user_name as reply_user_name, ru.first_name as reply_first_name, ru.last_name as reply_last_name
             FROM chat_message cm
             LEFT JOIN user u ON cm.from_user_id = u.id
+            LEFT JOIN chat_message reply_msg ON cm.reply_to_id = reply_msg.id
+            LEFT JOIN user ru ON reply_msg.from_user_id = ru.id
             WHERE cm.chat_room_id = ? AND cm.deleted = 0
             ORDER BY cm.created_at ASC
             LIMIT ? OFFSET ?
@@ -446,13 +461,19 @@ class ChatWebSocketServer
         foreach ($messages as $msg) {
             $userName = trim(($msg['first_name'] ?? '') . ' ' . ($msg['last_name'] ?? ''));
             if (empty($userName)) $userName = $msg['user_name'] ?? 'Unknown';
+            
+            // Get reply user name
+            $replyUserName = null;
+            if ($msg['reply_to_id']) {
+                $replyUserName = trim(($msg['reply_first_name'] ?? '') . ' ' . ($msg['reply_last_name'] ?? ''));
+                if (empty($replyUserName)) $replyUserName = $msg['reply_user_name'] ?? 'Unknown';
+            }
 
             $result[] = [
                 'id' => $msg['id'],
-                'message' => $msg['message'] ?? '',
+                'message' => $msg['message'],
                 'fromUserId' => $msg['from_user_id'],
                 'fromUserName' => $userName,
-                'toUserId' => $msg['to_user_id'] ?? null,
                 'isRead' => (bool)($msg['is_read'] ?? false),
                 'createdAt' => $msg['created_at'],
                 'isEdited' => (bool)($msg['is_edited'] ?? false),
@@ -460,6 +481,7 @@ class ChatWebSocketServer
                 'reactions' => $msg['reactions'] ? json_decode($msg['reactions'], true) : null,
                 'isPinned' => (bool)($msg['is_pinned'] ?? false),
                 'replyToId' => $msg['reply_to_id'] ?? null,
+                'replyUserName' => $replyUserName,
                 'attachmentType' => $msg['attachment_type'] ?? null,
                 'attachmentUrl' => $msg['attachment_url'] ?? null,
                 'attachmentName' => $msg['attachment_name'] ?? null
@@ -513,6 +535,23 @@ class ChatWebSocketServer
         $userName = trim(($userData['first_name'] ?? '') . ' ' . ($userData['last_name'] ?? ''));
         if (empty($userName)) $userName = $userData['user_name'] ?? 'Unknown';
 
+        // Get reply user name if replying to a message
+        $replyUserName = null;
+        if ($replyToId) {
+            $replySql = "SELECT cm.from_user_id, u.user_name, u.first_name, u.last_name 
+                        FROM chat_message cm 
+                        LEFT JOIN user u ON cm.from_user_id = u.id 
+                        WHERE cm.id = ?";
+            $replyStmt = $this->pdo->prepare($replySql);
+            $replyStmt->execute([$replyToId]);
+            $replyData = $replyStmt->fetch();
+            
+            if ($replyData) {
+                $replyUserName = trim(($replyData['first_name'] ?? '') . ' ' . ($replyData['last_name'] ?? ''));
+                if (empty($replyUserName)) $replyUserName = $replyData['user_name'] ?? 'Unknown';
+            }
+        }
+
         $messageData = [
             'type' => 'newMessage',
             'roomId' => $roomId,
@@ -524,6 +563,7 @@ class ChatWebSocketServer
                 'isRead' => false,
                 'createdAt' => $now,
                 'replyToId' => $replyToId,
+                'replyUserName' => $replyUserName,
                 'attachmentType' => $attachmentType,
                 'attachmentUrl' => $attachmentUrl,
                 'attachmentName' => $attachmentName
@@ -676,6 +716,17 @@ class ChatWebSocketServer
 
         if (!$messageId || !$newText) return;
 
+        // Check if user owns this message
+        $checkSql = "SELECT COUNT(*) as count FROM chat_message WHERE id = ? AND from_user_id = ? AND deleted = 0";
+        $checkStmt = $this->pdo->prepare($checkSql);
+        $checkStmt->execute([$messageId, $userId]);
+        $result = $checkStmt->fetch();
+        
+        if ($result['count'] == 0) {
+            $this->send($client, ['type' => 'error', 'message' => 'You can only edit your own messages']);
+            return;
+        }
+
         $sql = "UPDATE chat_message SET message = ?, is_edited = 1, edited_at = NOW() WHERE id = ? AND from_user_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$newText, $messageId, $userId]);
@@ -687,7 +738,11 @@ class ChatWebSocketServer
         $row = $roomStmt->fetch();
 
         if ($row) {
-            $this->broadcastToRoom($row['chat_room_id'], ['type' => 'messageEdited', 'messageId' => $messageId, 'roomId' => $row['chat_room_id']]);
+            $this->broadcastToRoom($row['chat_room_id'], [
+                'type' => 'messageEdited', 
+                'messageId' => $messageId, 
+                'roomId' => $row['chat_room_id']
+            ]);
         }
     }
 
@@ -874,6 +929,346 @@ class ChatWebSocketServer
             if (is_resource($client)) {
                 $this->send($client, $data);
             }
+        }
+    }
+
+    private function handleDeleteRoom($client, $data)
+    {
+        $userId = $this->getUserId($client);
+        $roomId = $data['roomId'] ?? null;
+        
+        if (!$userId || !$roomId) {
+            $this->send($client, ['type' => 'error', 'message' => 'User ID and Room ID are required']);
+            return;
+        }
+        
+        try {
+            // Check if user is in the room
+            $sql = "SELECT COUNT(*) as count FROM chat_room_user WHERE chat_room_id = ? AND user_id = ? AND deleted = 0";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$roomId, $userId]);
+            $result = $stmt->fetch();
+            
+            if ($result['count'] == 0) {
+                $this->send($client, ['type' => 'error', 'message' => 'You are not a member of this room']);
+                return;
+            }
+            
+            // Remove user from room (soft delete)
+            $sql = "UPDATE chat_room_user SET deleted = 1 WHERE chat_room_id = ? AND user_id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$roomId, $userId]);
+            
+            // Check if all users left the room
+            $countSql = "SELECT COUNT(*) as count FROM chat_room_user WHERE chat_room_id = ? AND deleted = 0";
+            $countStmt = $this->pdo->prepare($countSql);
+            $countStmt->execute([$roomId]);
+            $remainingUsers = $countStmt->fetchColumn();
+            
+            if ($remainingUsers == 0) {
+                // All users left, soft-delete the room
+                $sql = "UPDATE chat_room SET deleted = 1 WHERE id = ?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$roomId]);
+            }
+            
+            // Notify participants
+            $this->broadcastToRoom($roomId, [
+                'type' => 'roomDeleted',
+                'roomId' => $roomId
+            ], $userId);
+            
+            // Send success response
+            $this->send($client, [
+                'type' => 'roomDeletedSuccess',
+                'roomId' => $roomId
+            ]);
+            
+            // Send updated rooms list immediately
+            $this->handleLoadRooms($client);
+            
+            // DEBUG: Verify messages are NOT deleted
+            $checkSql = "SELECT COUNT(*) as count FROM chat_message WHERE chat_room_id = ? AND deleted = 0";
+            $checkStmt = $this->pdo->prepare($checkSql);
+            $checkStmt->execute([$roomId]);
+            $messageCount = $checkStmt->fetchColumn();
+            echo "Messages preserved in room $roomId: $messageCount\n";
+            
+        } catch (Exception $e) {
+            echo "Error deleting room: " . $e->getMessage() . "\n";
+            $this->send($client, ['type' => 'error', 'message' => 'Failed to delete room: ' . $e->getMessage()]);
+        }
+    }
+    
+    private function handleSearchMessages($client, $data)
+    {
+        $userId = $this->getUserId($client);
+        $roomId = $data['roomId'] ?? null;
+        $query = $data['query'] ?? '';
+        
+        if (!$userId || !$roomId || !$query) {
+            $this->send($client, ['type' => 'error', 'message' => 'User ID, Room ID and query are required']);
+            return;
+        }
+        
+        try {
+            // Check if user is member of the room
+            $sql = "SELECT COUNT(*) as count FROM chat_room_user WHERE chat_room_id = ? AND user_id = ? AND deleted = 0";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$roomId, $userId]);
+            $result = $stmt->fetch();
+            
+            if ($result['count'] == 0) {
+                $this->send($client, ['type' => 'error', 'message' => 'You are not a member of this room']);
+                return;
+            }
+            
+            // Search messages with trigram fuzzy matching
+            $lowerQuery = strtolower($query);
+            
+            // First try exact match
+            $sql = "SELECT cm.*, u.user_name, u.first_name, u.last_name
+                    FROM chat_message cm
+                    LEFT JOIN user u ON cm.from_user_id = u.id
+                    WHERE cm.chat_room_id = ? AND cm.deleted = 0 
+                    AND (LOWER(cm.message) LIKE ? OR LOWER(u.user_name) LIKE ? OR LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ?)
+                    ORDER BY cm.created_at DESC
+                    LIMIT 50";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $searchPattern = '%' . $lowerQuery . '%';
+            $stmt->execute([$roomId, $searchPattern, $searchPattern, $searchPattern, $searchPattern]);
+            $messages = $stmt->fetchAll();
+            
+            $results = [];
+            foreach ($messages as $msg) {
+                $userName = trim(($msg['first_name'] ?? '') . ' ' . ($msg['last_name'] ?? ''));
+                if (empty($userName)) $userName = $msg['user_name'] ?? 'Unknown';
+                
+                $results[] = [
+                    'id' => $msg['id'],
+                    'message' => $msg['message'],
+                    'fromUserId' => $msg['from_user_id'],
+                    'fromUserName' => $userName,
+                    'createdAt' => $msg['created_at'],
+                    'isEdited' => (bool)($msg['is_edited'] ?? false),
+                    'editedAt' => $msg['edited_at'] ?? null,
+                    'attachmentType' => $msg['attachment_type'] ?? null,
+                    'attachmentUrl' => $msg['attachment_url'] ?? null,
+                    'attachmentName' => $msg['attachment_name'] ?? null
+                ];
+            }
+            
+            // If no exact results, try fuzzy search
+            if (empty($results)) {
+                $sql = "SELECT cm.*, u.user_name, u.first_name, u.last_name
+                        FROM chat_message cm
+                        LEFT JOIN user u ON cm.from_user_id = u.id
+                        WHERE cm.chat_room_id = ? AND cm.deleted = 0
+                        ORDER BY cm.created_at DESC
+                        LIMIT 200"; // Get more messages for fuzzy processing
+                
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$roomId]);
+                $allMessages = $stmt->fetchAll();
+                
+                foreach ($allMessages as $msg) {
+                    $messageText = strtolower($msg['message'] ?? '');
+                    $userName = strtolower(trim(($msg['first_name'] ?? '') . ' ' . ($msg['last_name'] ?? '')));
+                    if (empty($userName)) $userName = strtolower($msg['user_name'] ?? '');
+                    
+                    // Simple trigram-like fuzzy matching
+                    if ($this->fuzzyMatch($lowerQuery, $messageText) || $this->fuzzyMatch($lowerQuery, $userName)) {
+                        $userName = trim(($msg['first_name'] ?? '') . ' ' . ($msg['last_name'] ?? ''));
+                        if (empty($userName)) $userName = $msg['user_name'] ?? 'Unknown';
+                        
+                        $results[] = [
+                            'id' => $msg['id'],
+                            'message' => $msg['message'],
+                            'fromUserId' => $msg['from_user_id'],
+                            'fromUserName' => $userName,
+                            'createdAt' => $msg['created_at'],
+                            'isEdited' => (bool)($msg['is_edited'] ?? false),
+                            'editedAt' => $msg['edited_at'] ?? null,
+                            'attachmentType' => $msg['attachment_type'] ?? null,
+                            'attachmentUrl' => $msg['attachment_url'] ?? null,
+                            'attachmentName' => $msg['attachment_name'] ?? null
+                        ];
+                        
+                        if (count($results) >= 50) break;
+                    }
+                }
+            }
+            
+            $this->send($client, [
+                'type' => 'searchMessagesResults',
+                'roomId' => $roomId,
+                'query' => $query,
+                'results' => $results,
+                'count' => count($results)
+            ]);
+            
+        } catch (Exception $e) {
+            echo "Error searching messages: " . $e->getMessage() . "\n";
+            $this->send($client, ['type' => 'error', 'message' => 'Failed to search messages: ' . $e->getMessage()]);
+        }
+    }
+    
+    private function fuzzyMatch($query, $text)
+    {
+        $queryLen = strlen($query);
+        $textLen = strlen($text);
+        
+        if ($queryLen === 0 || $textLen === 0) return false;
+        
+        // Check for common substrings of length 3+
+        for ($len = min(3, $queryLen); $len <= $queryLen; $len++) {
+            for ($i = 0; $i <= $queryLen - $len; $i++) {
+                $substring = substr($query, $i, $len);
+                if (strpos($text, $substring) !== false) {
+                    return true;
+                }
+            }
+        }
+        
+        // Simple character similarity check
+        $commonChars = 0;
+        $queryChars = str_split($query);
+        $textChars = str_split($text);
+        
+        foreach ($queryChars as $char) {
+            if (in_array($char, $textChars)) {
+                $commonChars++;
+            }
+        }
+        
+        $similarity = $commonChars / $queryLen;
+        return $similarity > 0.4; // 40% similarity threshold
+    }
+    
+    private function handleSearchAllRooms($client, $data)
+    {
+        $userId = $this->getUserId($client);
+        $query = $data['query'] ?? '';
+        
+        if (!$userId || !$query) {
+            $this->send($client, ['type' => 'error', 'message' => 'User ID and query are required']);
+            return;
+        }
+        
+        try {
+            // Search ALL rooms including deleted ones for this user
+            // This allows finding chats that were "deleted" from frontend but exist in database
+            $sql = "
+                SELECT DISTINCT cr.*, cru.deleted as user_deleted
+                FROM chat_room cr
+                INNER JOIN chat_room_user cru ON cr.id = cru.chat_room_id
+                WHERE cru.user_id = ? 
+                AND (cr.name LIKE ? OR cr.type LIKE ?)
+                ORDER BY cr.created_at DESC
+                LIMIT 20
+            ";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $searchPattern = '%' . $query . '%';
+            $stmt->execute([$userId, $searchPattern, $searchPattern]);
+            $rooms = $stmt->fetchAll();
+            
+            $result = [];
+            foreach ($rooms as $room) {
+                $roomId = $room['id'];
+                
+                // Last message
+                $msgSql = "SELECT message, created_at FROM chat_message WHERE chat_room_id = ? AND deleted = 0 ORDER BY created_at DESC LIMIT 1";
+                $msgStmt = $this->pdo->prepare($msgSql);
+                $msgStmt->execute([$roomId]);
+                $lastMsg = $msgStmt->fetch();
+                
+                // Unread count (only for active rooms)
+                $unreadCount = 0;
+                if ($room['user_deleted'] == 0) {
+                    $unreadSql = "SELECT COUNT(*) as cnt FROM chat_message WHERE chat_room_id = ? AND from_user_id != ? AND is_read = 0 AND deleted = 0";
+                    $unreadStmt = $this->pdo->prepare($unreadSql);
+                    $unreadStmt->execute([$roomId, $userId]);
+                    $unreadCount = $unreadStmt->fetchColumn();
+                }
+                
+                $result[] = [
+                    'id' => $room['id'],
+                    'name' => $room['name'],
+                    'type' => $room['type'],
+                    'createdAt' => $room['created_at'],
+                    'lastMessage' => $lastMsg['message'] ?? null,
+                    'lastMessageAt' => $lastMsg['created_at'] ?? null,
+                    'unreadCount' => (int)$unreadCount,
+                    'userDeleted' => (bool)$room['user_deleted'], // Important: shows if user "deleted" this chat
+                    'deleted' => (bool)$room['deleted']
+                ];
+            }
+            
+            $this->send($client, [
+                'type' => 'searchAllRoomsResults',
+                'query' => $query,
+                'results' => $result,
+                'count' => count($result)
+            ]);
+            
+        } catch (Exception $e) {
+            echo "Error searching all rooms: " . $e->getMessage() . "\n";
+            $this->send($client, ['type' => 'error', 'message' => 'Failed to search rooms: ' . $e->getMessage()]);
+        }
+    }
+    
+    private function handleRestoreRoom($client, $data)
+    {
+        $userId = $this->getUserId($client);
+        $roomId = $data['roomId'] ?? null;
+        
+        if (!$userId || !$roomId) {
+            $this->send($client, ['type' => 'error', 'message' => 'User ID and Room ID are required']);
+            return;
+        }
+        
+        try {
+            // Check if user was member of this room
+            $sql = "SELECT COUNT(*) as count FROM chat_room_user WHERE chat_room_id = ? AND user_id = ? AND deleted = 1";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$roomId, $userId]);
+            $result = $stmt->fetch();
+            
+            if ($result['count'] == 0) {
+                $this->send($client, ['type' => 'error', 'message' => 'You cannot restore this room']);
+                return;
+            }
+            
+            // Restore user access to room (undelete)
+            $sql = "UPDATE chat_room_user SET deleted = 0 WHERE chat_room_id = ? AND user_id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$roomId, $userId]);
+            
+            // If room was deleted, restore it too
+            $roomSql = "SELECT deleted FROM chat_room WHERE id = ?";
+            $roomStmt = $this->pdo->prepare($roomSql);
+            $roomStmt->execute([$roomId]);
+            $roomDeleted = $roomStmt->fetchColumn();
+            
+            if ($roomDeleted) {
+                $restoreRoomSql = "UPDATE chat_room SET deleted = 0 WHERE id = ?";
+                $restoreRoomStmt = $this->pdo->prepare($restoreRoomSql);
+                $restoreRoomStmt->execute([$roomId]);
+            }
+            
+            // Send success response
+            $this->send($client, [
+                'type' => 'roomRestored',
+                'roomId' => $roomId
+            ]);
+            
+            echo "Room $roomId restored by user $userId\n";
+            
+        } catch (Exception $e) {
+            echo "Error restoring room: " . $e->getMessage() . "\n";
+            $this->send($client, ['type' => 'error', 'message' => 'Failed to restore room: ' . $e->getMessage()]);
         }
     }
 }

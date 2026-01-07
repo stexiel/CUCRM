@@ -122,6 +122,19 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                     this.handleNewMessage(msg);
                     break;
                     
+                case 'searchMessagesResults':
+                    this.handleSearchMessagesResults(msg);
+                    break;
+                case 'searchAllRoomsResults':
+                    this.handleSearchAllRoomsResults(data);
+                    break;
+                case 'roomRestored':
+                    this.handleRoomRestored(data);
+                    break;
+                case 'reloadRooms':
+                    this.loadRooms();
+                    break;
+                    
                 case 'roomUpdate':
                 case 'roomCreated':
                     this.loadRooms();
@@ -141,6 +154,35 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                         this.loadMessages(msg.roomId);
                     }
                     this.loadRooms();
+                    break;
+                    
+                case 'roomDeleted':
+                    // Room was deleted by another user
+                    if (this.currentRoom && this.currentRoom.id === msg.roomId) {
+                        this.currentRoom = null;
+                        this.messages = [];
+                        this.$messagesContainer.html('<div class="no-chat-selected"><i class="fas fa-comments"></i><h2>CU CRM Chat</h2><p>Выберите чат из списка или создайте новый</p></div>');
+                        this.$chatName.text('Выберите чат');
+                        this.$deleteChatBtn.hide();
+                        this.$manageParticipantsBtn.hide();
+                        Espo.Ui.warning('Этот чат был удален');
+                    }
+                    this.loadRooms();
+                    break;
+                    
+                case 'roomDeletedSuccess':
+                    // Room was successfully deleted by current user
+                    // Clear current room
+                    this.currentRoom = null;
+                    this.messages = [];
+                    this.$messagesContainer.html('<div class="no-chat-selected"><i class="fas fa-comments"></i><h2>CU CRM Chat</h2><p>Выберите чат из списка или создайте новый</p></div>');
+                    this.$chatName.text('Выберите чат');
+                    
+                    // Hide delete button
+                    this.$deleteChatBtn.hide();
+                    this.$manageParticipantsBtn.hide();
+                    
+                    Espo.Ui.success('Чат удален');
                     break;
                     
                 case 'typing':
@@ -169,6 +211,8 @@ define('custom:views/chat/index', ['view'], function (Dep) {
         },
         
         handleRoomsMessage: function (rooms) {
+            console.log('Received rooms:', rooms.length);
+            console.log('Rooms data:', rooms);
             this.allRooms = rooms;
             this.rooms = rooms;
             this.renderRooms();
@@ -205,6 +249,185 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                 $status.text('онлайн');
             }
         },
+        
+        handleSearchMessagesResults: function (data) {
+            console.log('Search messages results:', data.count, 'messages found');
+            
+            // Show message search results
+            this.showMessageSearchResults(data.query, data.results);
+        },
+        
+        showMessageSearchResults: function (query, results) {
+            // Remove existing message search results
+            this.$el.find('.message-search-results').remove();
+            
+            if (results.length === 0) {
+                var noResultsHtml = `
+                    <div class="message-search-results">
+                        <div class="search-header">
+                            <i class="fas fa-search"></i>
+                            <span>Сообщения по запросу "${this.escapeHtml(query)}"</span>
+                        </div>
+                        <div class="no-message-results">Нет сообщений найдено</div>
+                    </div>
+                `;
+                this.$messagesContainer.prepend(noResultsHtml);
+                return;
+            }
+            
+            var resultsHtml = `
+                <div class="message-search-results">
+                    <div class="search-header">
+                        <i class="fas fa-search"></i>
+                        <span>Сообщения по запросу "${this.escapeHtml(query)}" (${results.length})</span>
+                    </div>
+                    <div class="search-results-list">
+            `;
+            
+            results.forEach(msg => {
+                var messageText = this.highlightSearchText(msg.message, query);
+                var time = this.formatMessageTime(msg.createdAt);
+                
+                resultsHtml += `
+                    <div class="search-result-item" data-message-id="${msg.id}">
+                        <div class="result-header">
+                            <span class="result-user">${this.escapeHtml(msg.fromUserName)}</span>
+                            <span class="result-time">${time}</span>
+                        </div>
+                        <div class="result-message">${messageText}</div>
+                    </div>
+                `;
+            });
+            
+            resultsHtml += `
+                    </div>
+                </div>
+            `;
+            
+            this.$messagesContainer.prepend(resultsHtml);
+            
+            // Handle clicks on search results
+            this.$el.find('.search-result-item').on('click', (e) => {
+                var messageId = $(e.currentTarget).data('message-id');
+                this.scrollToMessage(messageId);
+            });
+        },
+        
+        scrollToMessage: function (messageId) {
+            var $message = this.$el.find(`.message[data-message-id="${messageId}"]`);
+            if ($message.length > 0) {
+                // Highlight the message
+                $message.addClass('highlighted-message');
+                
+                // Scroll to it
+                $message[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Remove highlight after 3 seconds
+                setTimeout(() => {
+                    $message.removeClass('highlighted-message');
+                }, 3000);
+            }
+        },
+        
+        handleSearchAllRoomsResults: function (data) {
+            console.log('Search all rooms results:', data.count, 'rooms found');
+            
+            // Show all rooms search results including deleted ones
+            this.showAllRoomsSearchResults(data.query, data.results);
+        },
+        
+        showAllRoomsSearchResults: function (query, results) {
+            // Remove existing all rooms search results
+            this.$el.find('.all-rooms-search-results').remove();
+            
+            if (results.length === 0) {
+                var noResultsHtml = `
+                    <div class="all-rooms-search-results">
+                        <div class="search-header">
+                            <i class="fas fa-search"></i>
+                            <span>Все чаты по запросу "${this.escapeHtml(query)}"</span>
+                        </div>
+                        <div class="no-room-results">Нет чатов найдено</div>
+                    </div>
+                `;
+                this.$chatList.prepend(noResultsHtml);
+                return;
+            }
+            
+            var resultsHtml = `
+                <div class="all-rooms-search-results">
+                    <div class="search-header">
+                        <i class="fas fa-search"></i>
+                        <span>Все чаты по запросу "${this.escapeHtml(query)}" (${results.length})</span>
+                    </div>
+                    <div class="search-results-list">
+            `;
+            
+            results.forEach(room => {
+                var roomClass = room.userDeleted ? 'deleted-room' : 'active-room';
+                var deletedLabel = room.userDeleted ? '<span class="deleted-label">(удален)</span>' : '';
+                var lastMessage = room.lastMessage ? this.escapeHtml(room.lastMessage).substring(0, 50) + '...' : 'Нет сообщений';
+                
+                resultsHtml += `
+                    <div class="search-room-item ${roomClass}" data-room-id="${room.id}">
+                        <div class="result-room-header">
+                            <span class="result-room-name">${this.escapeHtml(room.name)}${deletedLabel}</span>
+                            <span class="result-room-time">${this.formatMessageTime(room.lastMessageAt)}</span>
+                        </div>
+                        <div class="result-room-message">${lastMessage}</div>
+                        ${room.userDeleted ? '<div class="restore-hint">Нажмите чтобы восстановить чат</div>' : ''}
+                    </div>
+                `;
+            });
+            
+            resultsHtml += `
+                    </div>
+                </div>
+            `;
+            
+            this.$chatList.prepend(resultsHtml);
+            
+            // Handle clicks on search results
+            this.$el.find('.search-room-item').on('click', (e) => {
+                var roomId = $(e.currentTarget).data('room-id');
+                var room = results.find(r => r.id === roomId);
+                
+                if (room && room.userDeleted) {
+                    // Restore deleted room
+                    this.restoreRoom(roomId);
+                } else {
+                    // Select normal room
+                    this.selectRoom(roomId);
+                }
+            });
+        },
+        
+        restoreRoom: function (roomId) {
+            // Send request to restore room (undelete for current user)
+            this.wsSend({
+                type: 'restoreRoom',
+                roomId: roomId
+            });
+        },
+        
+        handleRoomRestored: function (data) {
+            console.log('Room restored successfully:', data.roomId);
+            
+            // Reload rooms list to show restored room
+            this.loadRooms();
+            
+            // Remove search results
+            this.$el.find('.all-rooms-search-results').remove();
+            
+            // Clear search input
+            this.$searchInput.val('');
+            
+            // Show success message
+            Espo.Ui.success('Чат восстановлен');
+            
+            // Select the restored room
+            this.selectRoom(data.roomId);
+        },
 
         afterRender: function () {
             this.$messageInput = this.$el.find('#messageInput');
@@ -222,6 +445,7 @@ define('custom:views/chat/index', ['view'], function (Dep) {
             this.$closeGroupInfo = this.$el.find('#closeGroupInfo');
             this.$addParticipantsBtn = this.$el.find('#addParticipantsBtn');
             this.$manageParticipantsBtn = this.$el.find('#manageParticipantsBtn');
+            this.$deleteChatBtn = this.$el.find('#deleteChatBtn');
             
             this.$sendBtn.on('click', () => this.sendMessage());
             this.$messageInput.on('keypress', (e) => {
@@ -245,6 +469,25 @@ define('custom:views/chat/index', ['view'], function (Dep) {
             this.$newChatBtn.on('click', () => this.showNewChatDialog());
             this.$newGroupBtn.on('click', () => this.showNewGroupDialog());
             this.$searchInput.on('input', (e) => this.searchChats(e.target.value));
+            this.$searchInput.on('keypress', (e) => {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    this.hideAutocomplete();
+                    this.handleSearchAction();
+                }
+            });
+            this.$searchInput.on('keydown', (e) => {
+                if (e.which === 27) { // Escape
+                    this.hideAutocomplete();
+                }
+            });
+            
+            // Hide autocomplete when clicking outside
+            $(document).on('click', (e) => {
+                if (!$(e.target).closest('.search-box, .search-autocomplete').length) {
+                    this.hideAutocomplete();
+                }
+            });
             this.$emojiBtn.on('click', () => this.toggleEmojiPicker());
             this.$groupInfoBtn.on('click', () => this.showGroupInfo());
             this.$closeGroupInfo.on('click', () => this.hideGroupInfo());
@@ -269,6 +512,27 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                     e.preventDefault();
                     if (this.closeDialog) {
                         this.closeDialog();
+                    }
+                });
+            
+            // Delete chat handlers
+            this.$deleteChatBtn.on('click', () => this.showDeleteChatDialog());
+            
+            $(document)
+                .off('click.chatDelete')
+                .on('click.chatDelete', '#confirmDelete', (e) => {
+                    e.preventDefault();
+                    if (this.deleteChat) {
+                        this.deleteChat();
+                    }
+                });
+            
+            $(document)
+                .off('click.chatCancelDelete')
+                .on('click.chatCancelDelete', '#cancelDelete, #closeDeleteModal', (e) => {
+                    e.preventDefault();
+                    if (this.closeDeleteDialog) {
+                        this.closeDeleteDialog();
                     }
                 });
             
@@ -300,6 +564,9 @@ define('custom:views/chat/index', ['view'], function (Dep) {
         renderRooms: function () {
             if (!this.$chatList) return;
             
+            // Get current search query for highlighting
+            const searchQuery = this.$searchInput.val().trim();
+            
             let html = '';
             this.rooms.forEach(room => {
                 const isActive = this.currentRoom && this.currentRoom.id === room.id;
@@ -311,12 +578,17 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                 const initials = displayName.substring(0, 2).toUpperCase();
                 const time = room.lastMessageTime ? new Date(room.lastMessageTime).toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}) : '';
                 
+                // Highlight search query in display name
+                const highlightedName = searchQuery ? 
+                    this.highlightSearchText(displayName, searchQuery) : 
+                    this.escapeHtml(displayName);
+                
                 html += `
                     <div class="chat-item ${isActive ? 'active' : ''}" data-id="${room.id}">
                         <div class="chat-item-avatar">${initials}</div>
                         <div class="chat-item-content">
                             <div class="chat-item-header">
-                                <span class="chat-item-name">${this.escapeHtml(displayName)}</span>
+                                <span class="chat-item-name">${highlightedName}</span>
                                 <span class="chat-item-time">${time}</span>
                             </div>
                             <div class="chat-item-message">${this.escapeHtml(room.lastMessage || 'Нет сообщений')}${unreadBadge}</div>
@@ -412,10 +684,19 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                 // Pinned indicator
                 const pinnedClass = msg.isPinned ? 'pinned' : '';
                 
-                // Attachment (image)
+                // Attachment (image) - WhatsApp style
                 let attachmentHtml = '';
                 if (msg.attachmentType === 'image' && msg.attachmentUrl) {
-                    attachmentHtml = `<div class="message-image"><img src="${msg.attachmentUrl}" alt="${this.escapeHtml(msg.attachmentName || 'Image')}" /></div>`;
+                    attachmentHtml = `
+                        <div class="message-image-container">
+                            <div class="message-image" onclick="window.open('${msg.attachmentUrl}', '_blank')">
+                                <img src="${msg.attachmentUrl}" alt="${this.escapeHtml(msg.attachmentName || 'Image')}" loading="lazy" />
+                                <div class="image-overlay">
+                                    <i class="fas fa-expand"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
                 
                 // Avatar for received messages
@@ -458,9 +739,11 @@ define('custom:views/chat/index', ['view'], function (Dep) {
         attachMessageEvents: function () {
             // Context menu on right click
             this.$messagesContainer.find('.message').on('contextmenu', (e) => {
+                console.log('Right click detected on message');
                 e.preventDefault();
                 const messageId = $(e.currentTarget).data('message-id');
                 const messageIndex = $(e.currentTarget).data('index');
+                console.log('Message ID:', messageId, 'Index:', messageIndex);
                 this.showMessageContextMenu(e.pageX, e.pageY, messageId, messageIndex);
             });
             
@@ -509,6 +792,11 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                     } else {
                         this.$manageParticipantsBtn.hide();
                     }
+                }
+                
+                // Show delete button for all rooms
+                if (this.$deleteChatBtn) {
+                    this.$deleteChatBtn.show();
                 }
                 
                 this.loadMessages(roomId);
@@ -598,39 +886,486 @@ define('custom:views/chat/index', ['view'], function (Dep) {
         },
 
         searchChats: function (query) {
-            if (!query || query.trim() === '') {
+            var trimmedQuery = query.trim();
+            
+            if (!trimmedQuery) {
                 this.rooms = this.allRooms;
                 this.renderRooms();
-                this.$chatList.find('.search-users-section').remove();
+                this.hideSearchResults();
+                this.hideAutocomplete();
                 return;
             }
             
+            // Smart search with trigram fuzzy matching
             var filtered = [];
+            var lowerQuery = trimmedQuery.toLowerCase();
+            
+            // Priority 1: Exact match
+            var exactMatches = [];
+            // Priority 2: Starts with
+            var startsWithMatches = [];
+            // Priority 3: Contains with trigrams (fuzzy matching)
+            var fuzzyMatches = [];
+            
+            // Search in existing rooms
             for (var i = 0; i < this.allRooms.length; i++) {
                 var room = this.allRooms[i];
-                if (room.name.toLowerCase().indexOf(query.toLowerCase()) !== -1) {
-                    filtered.push(room);
+                var roomName = room.name.toLowerCase();
+                
+                if (roomName === lowerQuery) {
+                    exactMatches.push(room);
+                } else if (roomName.startsWith(lowerQuery)) {
+                    startsWithMatches.push(room);
+                } else if (this.trigramMatch(lowerQuery, roomName)) {
+                    fuzzyMatches.push(room);
                 }
             }
+            
+            // Combine by priority
+            filtered = exactMatches.concat(startsWithMatches, fuzzyMatches);
             
             this.rooms = filtered;
             this.renderRooms();
             
+            // Show trigram search results
+            this.showTrigramSearchResults(trimmedQuery, exactMatches, startsWithMatches, fuzzyMatches);
+            
+            // Show autocomplete with typo correction
+            this.showAutocomplete(trimmedQuery);
+            
+            // Search ALL users, messages and rooms (including deleted)
             var self = this;
             this.pendingUsersCallback = function(users) {
-                self.renderSearchUsers(users);
+                self.renderSearchUsers(users, trimmedQuery);
+                // Also search in messages
+                self.searchInMessages(trimmedQuery);
+                // Search all rooms including deleted ones
+                self.searchAllRooms(trimmedQuery);
             };
             this.wsSend({ type: 'getUsers' });
         },
+        
+        searchAllRooms: function (query) {
+            // Request search in all rooms including deleted ones
+            this.wsSend({
+                type: 'searchAllRooms',
+                query: query
+            });
+        },
+        
+        searchInMessages: function (query) {
+            if (!this.currentRoom || !query) return;
+            
+            // Request message search from server
+            this.wsSend({
+                type: 'searchMessages',
+                roomId: this.currentRoom.id,
+                query: query
+            });
+        },
+        
+        trigramMatch: function (query, text) {
+            // Generate trigrams for query and text
+            var queryTrigrams = this.generateTrigrams(query);
+            var textTrigrams = this.generateTrigrams(text);
+            
+            if (queryTrigrams.length === 0 || textTrigrams.length === 0) return false;
+            
+            // Calculate Jaccard similarity between trigram sets
+            var intersection = 0;
+            var union = new Set();
+            
+            queryTrigrams.forEach(trigram => union.add(trigram));
+            textTrigrams.forEach(trigram => union.add(trigram));
+            
+            queryTrigrams.forEach(trigram => {
+                if (textTrigrams.includes(trigram)) intersection++;
+            });
+            
+            var similarity = intersection / union.size;
+            
+            // Return true if similarity is above threshold (0.3 for fuzzy matching)
+            return similarity > 0.3;
+        },
+        
+        generateTrigrams: function (text) {
+            var trigrams = [];
+            var paddedText = '^' + text + '$'; // Add start/end markers
+            
+            for (var i = 0; i < paddedText.length - 2; i++) {
+                trigrams.push(paddedText.substr(i, 3));
+            }
+            
+            return trigrams;
+        },
+        
+        suggestCorrection: function (query) {
+            if (query.length < 3) return query;
+            
+            var bestMatch = query;
+            var bestScore = 0;
+            
+            this.allRooms.forEach(room => {
+                var roomName = room.name.toLowerCase();
+                var score = this.calculateSimilarity(query.toLowerCase(), roomName);
+                
+                if (score > bestScore && score > 0.6) { // 60% similarity threshold
+                    bestScore = score;
+                    bestMatch = room.name;
+                }
+            });
+            
+            return bestMatch;
+        },
+        
+        calculateSimilarity: function (str1, str2) {
+            var longer = str1.length > str2.length ? str1 : str2;
+            var shorter = str1.length > str2.length ? str2 : str1;
+            
+            if (longer.length === 0) return 1.0;
+            
+            var editDistance = this.levenshteinDistance(longer, shorter);
+            return (longer.length - editDistance) / longer.length;
+        },
+        
+        levenshteinDistance: function (str1, str2) {
+            var matrix = [];
+            
+            for (var i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            
+            for (var j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            
+            for (var i = 1; i <= str2.length; i++) {
+                for (var j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            
+            return matrix[str2.length][str1.length];
+        },
+        
+        showTrigramSearchResults: function (query, exactMatches, startsWithMatches, fuzzyMatches) {
+            this.$chatList.find('.search-results-info').remove();
+            
+            var totalResults = exactMatches.length + startsWithMatches.length + fuzzyMatches.length;
+            
+            var resultsHtml = '<div class="search-results-info">';
+            
+            if (totalResults > 0) {
+                // Check if we should suggest correction
+                var suggestedCorrection = this.suggestCorrection(query);
+                var hasTypo = suggestedCorrection.toLowerCase() !== query.toLowerCase() && suggestedCorrection !== query;
+                
+                if (hasTypo) {
+                    resultsHtml += `<div class="typo-correction">
+                        <i class="fas fa-magic"></i>
+                        Возможно, вы имели в виду: 
+                        <span class="correction-suggestion" onclick='this.closest(".search-results-info").parentNode.querySelector("#searchInput").value="${this.escapeHtml(suggestedCorrection)}"; this.closest(".search-results-info").parentNode.querySelector("#searchInput").dispatchEvent(new Event("input"))'>
+                            ${this.escapeHtml(suggestedCorrection)}
+                        </span>
+                    </div>`;
+                }
+                
+                resultsHtml += '<div class="search-trigrams">';
+                
+                // Show results by type
+                if (exactMatches.length > 0) {
+                    resultsHtml += `<div class="trigram-section exact">
+                        <div class="trigram-title">Точные совпадения (${exactMatches.length})</div>
+                        <div class="trigram-results">`;
+                    
+                    exactMatches.slice(0, 3).forEach(room => {
+                        resultsHtml += `<div class="trigram-result">${this.escapeHtml(this.getChatDisplayName(room))}</div>`;
+                    });
+                    
+                    resultsHtml += '</div></div>';
+                }
+                
+                if (startsWithMatches.length > 0) {
+                    resultsHtml += `<div class="trigram-section starts-with">
+                        <div class="trigram-title">Начинается с "${this.escapeHtml(query)}" (${startsWithMatches.length})</div>
+                        <div class="trigram-results">`;
+                    
+                    startsWithMatches.slice(0, 3).forEach(room => {
+                        resultsHtml += `<div class="trigram-result">${this.escapeHtml(this.getChatDisplayName(room))}</div>`;
+                    });
+                    
+                    resultsHtml += '</div></div>';
+                }
+                
+                if (fuzzyMatches.length > 0) {
+                    resultsHtml += `<div class="trigram-section fuzzy">
+                        <div class="trigram-title">Похожие на "${this.escapeHtml(query)}" (${fuzzyMatches.length})</div>
+                        <div class="trigram-results">`;
+                    
+                    fuzzyMatches.slice(0, 3).forEach(room => {
+                        resultsHtml += `<div class="trigram-result">${this.escapeHtml(this.getChatDisplayName(room))}</div>`;
+                    });
+                    
+                    resultsHtml += '</div></div>';
+                }
+                
+                resultsHtml += '</div>';
+            } else {
+                resultsHtml += `<div class="no-results">Нет результатов для "${this.escapeHtml(query)}"</div>`;
+            }
+            
+            resultsHtml += '</div>';
+            this.$chatList.prepend(resultsHtml);
+        },
+        
+        showAutocomplete: function (query) {
+            var suggestions = this.getAutocompleteSuggestions(query);
+            if (suggestions.length === 0) {
+                this.hideAutocomplete();
+                return;
+            }
+            
+            var autocompleteHtml = '<div class="search-autocomplete">';
+            suggestions.forEach(suggestion => {
+                autocompleteHtml += `
+                    <div class="autocomplete-item" data-query="${this.escapeHtml(suggestion)}">
+                        <i class="fas fa-search"></i>
+                        <span class="suggestion-text">${this.highlightSearchText(suggestion, query)}</span>
+                    </div>
+                `;
+            });
+            autocompleteHtml += '</div>';
+            
+            // Remove existing autocomplete
+            this.hideAutocomplete();
+            
+            // Position autocomplete below search input
+            this.$searchInput.closest('.search-box').css('position', 'relative').append(autocompleteHtml);
+            
+            // Handle autocomplete clicks
+            this.$el.find('.autocomplete-item').on('click', (e) => {
+                var selectedQuery = $(e.currentTarget).data('query');
+                this.$searchInput.val(selectedQuery);
+                this.searchChats(selectedQuery);
+                this.hideAutocomplete();
+            });
+        },
+        
+        hideAutocomplete: function () {
+            this.$el.find('.search-autocomplete').remove();
+        },
+        
+        getAutocompleteSuggestions: function (query) {
+            if (query.length < 2) return [];
+            
+            var suggestions = [];
+            var lowerQuery = query.toLowerCase();
+            var allNames = [];
+            
+            // Collect all room and user names
+            this.allRooms.forEach(room => {
+                allNames.push(room.name);
+            });
+            
+            // Bilingual common suggestions with translations
+            var bilingualSuggestions = [
+                // Russian-English pairs
+                'привет', 'hello', 'hi',
+                'чат', 'chat', 'conversation',
+                'группа', 'group', 'team',
+                'общение', 'message', 'messages',
+                'новый', 'new', 'create',
+                'друг', 'friend', 'contact',
+                'семья', 'family', 'home',
+                'работа', 'work', 'job', 'office',
+                'проект', 'project', 'task',
+                'встреча', 'meeting', 'call',
+                'помощь', 'help', 'support',
+                'информация', 'info', 'information',
+                'документ', 'document', 'file',
+                'фото', 'photo', 'image', 'picture',
+                'видео', 'video', 'media',
+                'музыка', 'music', 'audio',
+                'ссылка', 'link', 'url',
+                'новости', 'news', 'updates',
+                'событие', 'event', 'calendar',
+                'задача', 'task', 'todo',
+                'план', 'plan', 'schedule',
+                'отчет', 'report', 'summary',
+                'идея', 'idea', 'suggestion',
+                'вопрос', 'question', 'ask',
+                'ответ', 'answer', 'reply',
+                'комментарий', 'comment', 'feedback',
+                'обсуждение', 'discussion', 'talk'
+            ];
+            
+            // Add all suggestions
+            allNames = allNames.concat(bilingualSuggestions);
+            
+            // Find matching suggestions with trigram fuzzy matching
+            allNames.forEach(name => {
+                var lowerName = name.toLowerCase();
+                var score = 0;
+                
+                // Exact match gets highest score
+                if (lowerName === lowerQuery) {
+                    score = 100;
+                } else if (lowerName.startsWith(lowerQuery)) {
+                    score = 80;
+                } else if (lowerName.includes(lowerQuery)) {
+                    score = 60;
+                } else if (this.trigramMatch(lowerQuery, lowerName)) {
+                    score = 40;
+                }
+                
+                if (score > 0 && suggestions.indexOf(name) === -1) {
+                    suggestions.push({ name: name, score: score });
+                }
+            });
+            
+            // Also add transliteration suggestions
+            var transliterations = this.getTransliterations(query);
+            transliterations.forEach(trans => {
+                allNames.forEach(name => {
+                    var lowerName = name.toLowerCase();
+                    if (lowerName.includes(trans) && !suggestions.find(s => s.name === name)) {
+                        suggestions.push({ name: name, score: 30 });
+                    }
+                });
+            });
+            
+            // Sort by score (highest first) then by relevance
+            suggestions.sort((a, b) => {
+                if (a.score !== b.score) return b.score - a.score;
+                
+                var aLower = a.name.toLowerCase();
+                var bLower = b.name.toLowerCase();
+                
+                // Prioritize common words
+                var commonWords = ['hello', 'chat', 'group', 'message', 'new', 'привет', 'чат', 'группа', 'сообщение', 'новый'];
+                var aIsCommon = commonWords.includes(aLower);
+                var bIsCommon = commonWords.includes(bLower);
+                if (aIsCommon && !bIsCommon) return -1;
+                if (bIsCommon && !aIsCommon) return 1;
+                
+                // Alphabetical
+                return a.name.localeCompare(b.name);
+            });
+            
+            // Return just the names, limited to 5
+            return suggestions.slice(0, 5).map(s => s.name);
+        },
+        
+        getTransliterations: function (query) {
+            var transliterations = [];
+            var cyrillicToLatin = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+                'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+                'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c',
+                'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+            };
+            
+            // Transliterate Russian to Latin
+            var latin = '';
+            for (var i = 0; i < query.length; i++) {
+                var char = query[i].toLowerCase();
+                latin += cyrillicToLatin[char] || char;
+            }
+            if (latin !== query.toLowerCase()) {
+                transliterations.push(latin);
+            }
+            
+            return transliterations;
+        },
+        
+        showSearchResults: function (query, count) {
+            this.$chatList.find('.search-results-info').remove();
+            
+            var resultsHtml = `
+                <div class="search-results-info">
+                    ${count > 0 ? 
+                        `Найдено чатов: ${count} для "${this.escapeHtml(query)}"` : 
+                        `Нет чатов для "${this.escapeHtml(query)}"`
+                    }
+                </div>
+            `;
+            this.$chatList.prepend(resultsHtml);
+        },
+        
+        hideSearchResults: function () {
+            this.$chatList.find('.search-results-info').remove();
+            this.$chatList.find('.search-users-section').remove();
+        },
+        
+        handleSearchAction: function () {
+            var query = this.$searchInput.val().trim();
+            if (query) {
+                // If pressing Enter on search, create new chat with first matching user
+                var self = this;
+                this.pendingUsersCallback = function(users) {
+                    var matchingUsers = users.filter(user => 
+                        user.name.toLowerCase().includes(query.toLowerCase())
+                    );
+                    if (matchingUsers.length > 0) {
+                        self.createDirectChat(matchingUsers[0].id);
+                    }
+                };
+                this.wsSend({ type: 'getUsers' });
+            }
+        },
 
-        renderSearchUsers: function (users) {
+        renderSearchUsers: function (users, query) {
             this.$chatList.find('.search-users-section').remove();
             
-            if (users.length === 0) return;
+            if (users.length === 0 || !query) return;
+            
+            var lowerQuery = query.toLowerCase();
+            
+            // Filter users by search query with fuzzy matching
+            var filteredUsers = users.filter(user => {
+                var userName = user.name.toLowerCase();
+                var userUserName = user.userName.toLowerCase();
+                
+                // Exact match in full name
+                if (userName.includes(lowerQuery)) return true;
+                
+                // Exact match in username
+                if (userUserName.includes(lowerQuery)) return true;
+                
+                // Check if query parts match name parts
+                var queryParts = lowerQuery.split(' ');
+                var nameParts = userName.split(' ');
+                
+                // Match any query part to any name part
+                for (var i = 0; i < queryParts.length; i++) {
+                    for (var j = 0; j < nameParts.length; j++) {
+                        if (nameParts[j].includes(queryParts[i])) {
+                            return true;
+                        }
+                    }
+                }
+                
+                // Fuzzy matching with trigrams
+                if (this.trigramMatch(lowerQuery, userName) || this.trigramMatch(lowerQuery, userUserName)) {
+                    return true;
+                }
+                
+                return false;
+            });
+            
+            if (filteredUsers.length === 0) return;
             
             let html = '<div class="search-users-section"><div class="search-section-title">Контакты</div>';
             
-            users.forEach(user => {
+            filteredUsers.forEach(user => {
                 const initials = user.name.substring(0, 2).toUpperCase();
                 html += `
                     <div class="chat-item search-user-item" data-user-id="${user.id}">
@@ -935,12 +1670,9 @@ define('custom:views/chat/index', ['view'], function (Dep) {
         },
 
         showMessageContextMenu: function (x, y, messageId, messageIndex) {
-            // Remove existing menu
-            $('.message-context-menu').remove();
-            
+            console.log('Showing context menu at:', x, y, 'for message:', messageId);
             const message = this.messages[messageIndex];
-            const currentUserId = this.getUser().id;
-            const isOwn = message.fromUserId === currentUserId;
+            const isOwn = message.fromUserId === this.getUser().id;
             
             let menuHtml = '<div class="message-context-menu" style="left:' + x + 'px; top:' + y + 'px;">';
             menuHtml += '<div class="menu-item" data-action="reply"><i class="fas fa-reply"></i> Ответить</div>';
@@ -1091,7 +1823,15 @@ define('custom:views/chat/index', ['view'], function (Dep) {
 
         sendMessage: function () {
             var message = this.$messageInput.val().trim();
-            if (!message || !this.currentRoom) return;
+            if (!this.currentRoom) return;
+            
+            // Check if we have a pending image
+            if (this.pendingImage) {
+                this.sendImageWithCaption(message);
+                return;
+            }
+            
+            if (!message) return; // Don't send empty text messages
             
             if (this.editingMessage) {
                 this.wsSend({
@@ -1114,6 +1854,33 @@ define('custom:views/chat/index', ['view'], function (Dep) {
             }
             
             this.wsSend(data);
+            this.$messageInput.val('');
+            this.replyingTo = null;
+            this.$el.find('.reply-preview').remove();
+        },
+        
+        sendImageWithCaption: function (caption) {
+            if (!this.pendingImage || !this.currentRoom) return;
+            
+            var data = {
+                type: 'sendMessage',
+                roomId: this.currentRoom.id,
+                message: caption || this.pendingImage.fileName,
+                attachmentType: 'image',
+                attachmentUrl: this.pendingImage.base64,
+                attachmentName: this.pendingImage.fileName
+            };
+            
+            if (this.replyingTo) {
+                data.replyToId = this.replyingTo.id;
+            }
+            
+            console.log('Sending image with caption to room:', this.currentRoom.id);
+            this.wsSend(data);
+            
+            // Clean up
+            this.pendingImage = null;
+            this.$el.find('.image-preview').remove();
             this.$messageInput.val('');
             this.replyingTo = null;
             this.$el.find('.reply-preview').remove();
@@ -1143,11 +1910,13 @@ define('custom:views/chat/index', ['view'], function (Dep) {
             reader.onload = function (e) {
                 var img = new Image();
                 img.onload = function () {
+                    // WhatsApp-like compression
                     var canvas = document.createElement('canvas');
                     var width = img.width;
                     var height = img.height;
                     
-                    var maxDimension = 1920;
+                    // Limit to 1080px (WhatsApp standard)
+                    var maxDimension = 1080;
                     if (width > maxDimension || height > maxDimension) {
                         if (width > height) {
                             height = (height / width) * maxDimension;
@@ -1163,8 +1932,19 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                     var ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    var base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    // Higher compression for WhatsApp-like quality
+                    var base64 = canvas.toDataURL('image/jpeg', 0.7);
                     console.log('Compressed base64 length:', base64.length);
+                    
+                    // Check size limit (5MB for WebSocket)
+                    if (base64.length > 5 * 1024 * 1024) {
+                        // Try even more compression
+                        base64 = canvas.toDataURL('image/jpeg', 0.5);
+                        if (base64.length > 5 * 1024 * 1024) {
+                            Espo.Ui.error('Изображение слишком большое. Попробуйте файл меньшего размера.');
+                            return;
+                        }
+                    }
                     
                     self.sendImageMessage(base64, file.name);
                 };
@@ -1194,24 +1974,39 @@ define('custom:views/chat/index', ['view'], function (Dep) {
                 return;
             }
             
-            var data = {
-                type: 'sendMessage',
-                roomId: this.currentRoom.id,
-                message: fileName,
-                attachmentType: 'image',
-                attachmentUrl: base64,
-                attachmentName: fileName
+            // Show image preview in input area like WhatsApp
+            this.showImagePreview(base64, fileName);
+        },
+        
+        showImagePreview: function (base64, fileName) {
+            // Remove existing preview
+            this.$el.find('.image-preview').remove();
+            
+            var previewHtml = `
+                <div class="image-preview">
+                    <div class="preview-image">
+                        <img src="${base64}" alt="${this.escapeHtml(fileName)}" />
+                        <button class="remove-image" onclick="this.closest('.image-preview').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preview-caption">
+                        <input type="text" placeholder="Добавьте подпись..." class="image-caption-input" />
+                    </div>
+                </div>
+            `;
+            
+            // Insert before message input container
+            this.$el.find('.message-input-container').before(previewHtml);
+            
+            // Focus on caption input
+            this.$el.find('.image-caption-input').focus();
+            
+            // Store image data for sending
+            this.pendingImage = {
+                base64: base64,
+                fileName: fileName
             };
-            
-            if (this.replyingTo) {
-                data.replyToId = this.replyingTo.id;
-            }
-            
-            console.log('Sending image message to room:', this.currentRoom.id);
-            this.wsSend(data);
-            this.replyingTo = null;
-            this.$el.find('.reply-preview').remove();
-            Espo.Ui.success('Изображение отправляется...');
         },
 
         setTyping: function (isTyping) {
@@ -1314,6 +2109,40 @@ define('custom:views/chat/index', ['view'], function (Dep) {
             `;
             
             return html;
+        },
+
+        // Delete chat functions
+        showDeleteChatDialog: function () {
+            if (!this.currentRoom) {
+                Espo.Ui.error('Выберите чат для удаления');
+                return;
+            }
+            
+            $('#deleteChatModal').show();
+        },
+        
+        closeDeleteDialog: function () {
+            $('#deleteChatModal').hide();
+        },
+        
+        deleteChat: function () {
+            if (!this.currentRoom) {
+                return;
+            }
+            
+            const roomId = this.currentRoom.id;
+            
+            // Send delete request via WebSocket
+            this.wsSend({
+                type: 'deleteRoom',
+                roomId: roomId
+            });
+            
+            // Close modal
+            this.closeDeleteDialog();
+            
+            // Don't clear immediately - wait for server response
+            // The room will be cleared when we receive roomDeletedSuccess
         },
 
         onRemove: function () {

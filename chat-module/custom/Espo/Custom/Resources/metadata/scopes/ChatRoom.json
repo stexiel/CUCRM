@@ -1,0 +1,12 @@
+{
+    "entity": true,
+    "stream": false,
+    "importable": false,
+    "object": false,
+    "acl": "boolean",
+    "customizable": false,
+    "type": "Base",
+    "tab": true,
+    "module": "Custom",
+    "iconClass": "fas fa-comments"
+}
